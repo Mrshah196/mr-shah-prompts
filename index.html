@@ -110,6 +110,32 @@ header{background:rgba(4,10,18,.90);border-bottom:1px solid rgba(255,255,255,.08
 .img-like.liked{background:rgba(245,197,24,.95);border-color:transparent;color:#14110a}
 @media(max-width:640px){.card-img{margin:-17px -17px 12px}}
 </style>
+<style id="more-icons-3d">
+/* 3D glossy animated icons for the "More" categories dropdown */
+.extra-chips .more-icon{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  background:radial-gradient(circle at 32% 26%, #ffedb0 0%, #f5c518 42%, #c9960a 74%, #8a6300 100%);
+  border:1px solid rgba(255,225,130,.55);
+  box-shadow:0 4px 10px rgba(0,0,0,.5), inset 0 2px 3px rgba(255,255,255,.75), inset 0 -4px 7px rgba(122,80,0,.55);
+  text-shadow:0 1px 2px rgba(90,60,0,.45);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s ease;
+}
+.extra-chips .chip:hover .more-icon{
+  transform:translateY(-3px) rotate(-10deg) scale(1.22);
+  box-shadow:0 9px 20px rgba(0,0,0,.55), 0 0 14px rgba(245,197,24,.35), inset 0 2px 3px rgba(255,255,255,.8), inset 0 -4px 7px rgba(122,80,0,.5);
+}
+@keyframes iconPop{
+  0%{opacity:0;transform:scale(.4) rotate(-30deg)}
+  70%{opacity:1;transform:scale(1.15) rotate(6deg)}
+  100%{opacity:1;transform:scale(1) rotate(0deg)}
+}
+.extra-chips.show .more-icon{animation:iconPop .45s cubic-bezier(.34,1.56,.64,1) backwards;animation-delay:var(--d,0ms)}
+@media (prefers-reduced-motion: reduce){
+  .extra-chips.show .more-icon{animation:none}
+  .extra-chips .more-icon{transition:none}
+}
+</style>
 </head>
 <body>
 <header><div class="wrap nav">
@@ -192,7 +218,7 @@ function setupOk(){return typeof SUPABASE_URL!=="undefined"&&SUPABASE_URL&&typeo
 function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),2200)}
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;", "'":"&#39;"}[c]))}
 function ago(iso){if(!iso)return"recently";const s=Math.max(0,(Date.now()-new Date(iso))/1000);if(s<60)return"just now";if(s<3600)return Math.floor(s/60)+"m ago";if(s<86400)return Math.floor(s/3600)+"h ago";if(s<2592000)return Math.floor(s/86400)+"d ago";return new Date(iso).toLocaleDateString()}
-function initChips(){const box=$("chips"),extraBox=$("extraChips");const ICONS={All:"▦",Portrait:"◉","Cinematic Video":"▶",Photography:"◈",Fashion:"✦",Anime:"◒",Fantasy:"♢","Logo & Branding":"◇","Social Media":"●",Funny:"☻",Gaming:"🎮",Islamic:"☪",Wedding:"💍",Travel:"✈",Food:"🍴",Cars:"🚘",Nature:"🌿",Architecture:"⌂",Product:"▣","3D & Surreal":"◈","Advertising & Marketing":"▤","YouTube & Thumbnails":"▶","Motivation & Quotes":"✦",Business:"◼",Animals:"🐾",Historical:"⌛",Horror:"☠","Sci-Fi":"✧",Luxury:"◆","Kids & Family":"●","Eid & Festivals":"☪",Other:"•••"};["All",...CATS,"More"].forEach(c=>{const b=document.createElement("button");b.className="chip"+(c==="All"?" on":"")+(c==="More"?" more-chip":"");b.dataset.cat=c;b.textContent=(c==="More"?"More ▼":(ICONS[c]?ICONS[c]+" ":"")+c);if(c==="More"){b.onclick=()=>{const open=extraBox.classList.toggle("show");b.textContent=open?"More ▲":"More ▼";if(open){[...extraBox.children].forEach(x=>{const cat=x.dataset.cat;if(cat===activeCat)x.classList.add("on")});toast("More categories opened")}}}else{b.onclick=()=>{activeCat=c;currentPage=1;[...box.children,...extraBox.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");applyFilters()}}box.appendChild(b)});EXTRA_CATS.forEach(c=>{const b=document.createElement("button");b.className="chip";b.dataset.cat=c;b.innerHTML=`<span class="more-icon">${ICONS[c]||"•"}</span><span class="more-label">${c}</span><span class="more-count">(0)</span>`;b.onclick=()=>{activeCat=c;currentPage=1;[...box.children,...extraBox.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");applyFilters()};extraBox.appendChild(b)});$("fCategory").innerHTML=[...CATS,...EXTRA_CATS].map(c=>`<option>${c}</option>`).join("")}
+function initChips(){const box=$("chips"),extraBox=$("extraChips");const ICONS={All:"▦",Portrait:"◉","Cinematic Video":"▶",Photography:"◈",Fashion:"✦",Anime:"◒",Fantasy:"♢","Logo & Branding":"◇","Social Media":"●",Funny:"☻",Gaming:"🎮",Islamic:"☪",Wedding:"💍",Travel:"✈",Food:"🍴",Cars:"🚘",Nature:"🌿",Architecture:"⌂",Product:"▣","3D & Surreal":"◈","Advertising & Marketing":"▤","YouTube & Thumbnails":"▶","Motivation & Quotes":"✦",Business:"◼",Animals:"🐾",Historical:"⌛",Horror:"☠","Sci-Fi":"✧",Luxury:"◆","Kids & Family":"●","Eid & Festivals":"☪",Other:"•••"};["All",...CATS,"More"].forEach(c=>{const b=document.createElement("button");b.className="chip"+(c==="All"?" on":"")+(c==="More"?" more-chip":"");b.dataset.cat=c;b.textContent=(c==="More"?"More ▼":(ICONS[c]?ICONS[c]+" ":"")+c);if(c==="More"){b.onclick=()=>{const open=extraBox.classList.toggle("show");b.textContent=open?"More ▲":"More ▼";if(open){[...extraBox.children].forEach(x=>{const cat=x.dataset.cat;if(cat===activeCat)x.classList.add("on")});toast("More categories opened")}}}else{b.onclick=()=>{activeCat=c;currentPage=1;[...box.children,...extraBox.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");applyFilters()}}box.appendChild(b)});EXTRA_CATS.forEach((c,i)=>{const b=document.createElement("button");b.className="chip";b.style.setProperty("--d",(i*26)+"ms");b.dataset.cat=c;b.innerHTML=`<span class="more-icon">${ICONS[c]||"•"}</span><span class="more-label">${c}</span><span class="more-count">(0)</span>`;b.onclick=()=>{activeCat=c;currentPage=1;[...box.children,...extraBox.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");applyFilters()};extraBox.appendChild(b)});$("fCategory").innerHTML=[...CATS,...EXTRA_CATS].map(c=>`<option>${c}</option>`).join("")}
 function updateCounts(){const counts={};allPrompts.forEach(p=>counts[p.category]=(counts[p.category]||0)+1);const ICONS={All:"▦",Portrait:"◉","Cinematic Video":"▶",Photography:"◈",Fashion:"✦",Anime:"◒",Fantasy:"♢","Logo & Branding":"◇","Social Media":"●",Funny:"☻",Gaming:"🎮",Islamic:"☪",Wedding:"💍",Travel:"✈",Food:"🍴",Cars:"🚘",Nature:"🌿",Architecture:"⌂",Product:"▣","3D & Surreal":"◈","Advertising & Marketing":"▤","YouTube & Thumbnails":"▶","Motivation & Quotes":"✦",Business:"◼",Animals:"🐾",Historical:"⌛",Horror:"☠","Sci-Fi":"✧",Luxury:"◆","Kids & Family":"●","Eid & Festivals":"☪",Other:"•••"};[...$("chips").children,...$("extraChips").children].forEach(b=>{const c=b.dataset.cat;if(c==="More")return;if(c==="All"){b.textContent=ICONS.All+" All ("+allPrompts.length+")";return}const label=b.querySelector(".more-label"),count=b.querySelector(".more-count");if(label){label.textContent=c;if(count)count.textContent="("+(counts[c]||0)+")"}else{b.textContent=(ICONS[c]?ICONS[c]+" ":"")+c+" ("+(counts[c]||0)+")"}})}
 async function loadPrompts(){allPrompts=[...BUILTIN_PROMPTS];if(setupOk()){try{sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);let r=await sb.from("prompts").select("*").eq("status","approved").order("created_at",{ascending:false}).limit(500);if(r.error)r=await sb.from("prompts").select("*").order("created_at",{ascending:false}).limit(500);if(!r.error&&r.data){const ids=new Set(r.data.map(x=>x.id));allPrompts=[...r.data,...BUILTIN_PROMPTS.filter(x=>!ids.has(x.id))]}}catch(e){}}buildExtraPrompts();updateCounts();updateHero();renderFeatured();applyFilters()}
 function updateHero(){$('heroPrompts').textContent=allPrompts.length.toLocaleString();$('heroCopies').textContent=allPrompts.reduce((a,p)=>a+(Number(p.copies)||0),0).toLocaleString();const creators=new Set(allPrompts.map(p=>p.author||'Anonymous')).size;const e=$('heroCreators');if(e)e.textContent=creators.toLocaleString()}
