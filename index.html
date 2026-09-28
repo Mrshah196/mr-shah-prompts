@@ -47,6 +47,50 @@ html[data-theme="light"] .field input,html[data-theme="light"] .field select,htm
 @media(max-width:900px){.hero-scene{right:8px;opacity:.35}.hero-main{min-height:390px}}
 .pagination{display:flex;justify-content:center;align-items:center;gap:7px;flex-wrap:wrap;padding:4px 0 55px}.page-btn{min-width:38px;height:38px;border:1px solid var(--line2);border-radius:10px;background:var(--surface);color:var(--txt);font-weight:750;cursor:pointer}.page-btn.active{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#15120a;border-color:transparent}.page-btn:disabled{opacity:.4;cursor:not-allowed}.page-info{font-size:11px;color:var(--mut);margin:0 7px}
 </style>
+<style id="theme-match-exact-v2">
+/* Reference-theme lock: same overall visual language, preserving existing functionality. */
+.wrap{width:min(1440px,calc(100% - 40px))}
+header{background:rgba(4,10,18,.90);border-bottom:1px solid rgba(255,255,255,.08)}
+.nav{min-height:70px;gap:16px}
+.avatar{width:50px;height:50px;flex-basis:50px;border-radius:50%;border-width:2px;box-shadow:0 0 0 4px rgba(245,197,24,.08),0 8px 20px rgba(0,0,0,.18)}
+.brand{gap:12px}.brand h1{font-size:18px}.brand p{font-size:11px}
+.nav-links{gap:5px}.nav-link{font-size:12px;padding:9px 12px;border-radius:12px}
+.nav-link:hover{transform:translateY(-2px);color:#fff;border-color:rgba(245,197,24,.26);background:rgba(245,197,24,.08);box-shadow:0 6px 18px rgba(245,197,24,.08)}
+.nav-link.active,.gen-btn{box-shadow:0 8px 18px rgba(245,197,24,.08)}
+.nav-actions{gap:8px}.btn{border-radius:12px}.btn.primary{box-shadow:0 9px 24px rgba(245,197,24,.20)}
+.hero{padding:14px 0 10px}.hero-main{min-height:340px;border-radius:18px;padding:42px 52px 38px;background-size:cover;background-position:center center;background-repeat:no-repeat;border-color:rgba(125,180,255,.18)}
+.hero-main:after{background:linear-gradient(0deg,rgba(4,9,16,.48),transparent 46%)}
+.eyebrow{font-size:10px;padding:7px 12px;border:1px solid rgba(245,197,24,.32);border-radius:999px;background:rgba(10,13,18,.60);margin-bottom:12px;backdrop-filter:blur(10px)}
+.eyebrow:before{width:18px}
+.hero h2{font-size:clamp(36px,4.9vw,58px);max-width:670px;letter-spacing:-2.2px;text-shadow:0 3px 24px rgba(0,0,0,.30)}
+.hero-copy{font-size:13px;max-width:620px;color:#e0e5ee;margin-top:14px;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.hero-actions{margin-top:18px;gap:10px}
+.hero-side{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:10px}
+.mini-card{min-height:76px;padding:14px 18px;border-radius:16px;background:linear-gradient(135deg,rgba(9,20,35,.92),rgba(7,13,22,.92));border:1px solid rgba(85,140,210,.16);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.mini-card .num{font-size:27px}.mini-card .label{font-size:10px;color:#aeb8c8}
+.mini-card.accent{background:linear-gradient(135deg,rgba(20,35,55,.92),rgba(7,13,22,.92));border-color:rgba(75,160,255,.22)}
+.community-card{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:14px}.community-copy{font-size:11px;line-height:1.45;color:#eef3fb}.community-copy span{color:#b5bfce}.community-avatars{display:flex;align-items:center;padding-left:7px}.community-avatars img,.community-avatars span{width:32px;height:32px;border-radius:50%;border:2px solid #0a1220;margin-left:-7px;object-fit:cover;background:#111820}.community-avatars span{display:grid;place-items:center;background:var(--gold);color:#171205;font-weight:900;margin-left:3px;border-color:#0a1220}
+.toolbar-wrap{padding:4px 0 20px}.toolbar{gap:9px}.search{height:48px;border-radius:14px;background:rgba(7,14,24,.72);border-color:rgba(112,157,214,.28)}.sort{height:48px;border-radius:14px;background:rgba(7,14,24,.72);border-color:rgba(112,157,214,.28)}
+.chips{gap:7px;margin-top:11px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:2px 0 7px}.chips::-webkit-scrollbar{display:none}
+.chips>.chip{width:auto;min-width:max-content;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:38px;padding:0 13px;border-radius:12px;border:1px solid rgba(112,157,214,.18);background:rgba(7,15,26,.65);color:#dfe6f1;font-size:11px;font-weight:800;transition:transform .22s cubic-bezier(.2,.7,.2,1),background .22s,border-color .22s,box-shadow .22s,color .22s;position:relative;overflow:hidden}
+.chips>.chip:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.10) 45%,transparent 65%);transform:translateX(-125%);transition:transform .5s ease;pointer-events:none}
+.chips>.chip:hover{transform:translateY(-3px) scale(1.02);background:rgba(14,28,48,.92);border-color:rgba(110,178,255,.40);box-shadow:0 9px 22px rgba(0,0,0,.24),0 0 0 1px rgba(125,180,255,.05);color:#fff}
+.chips>.chip:hover:before{transform:translateX(125%)}
+.chips>.chip.on{background:linear-gradient(135deg,rgba(245,197,24,.18),rgba(21,34,51,.88));border-color:rgba(245,197,24,.62);color:#ffd95a;box-shadow:0 8px 20px rgba(245,197,24,.10)}
+.chips>.chip.more-chip{border-color:rgba(173,202,239,.35);color:#f0f4fb;background:rgba(8,17,30,.88)}
+.chips>.chip.more-chip:hover{border-color:rgba(245,197,24,.58);color:#ffd95a}
+.extra-chips{top:104px;width:min(620px,calc(100vw - 40px));padding:12px 10px;grid-template-columns:1fr 1fr;gap:1px;border:1px solid rgba(112,169,235,.38);border-radius:18px;background:linear-gradient(145deg,rgba(7,16,29,.995),rgba(5,11,21,.995));box-shadow:0 24px 70px rgba(0,0,0,.63),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(22px)}
+.extra-chips .chip{height:38px;grid-template-columns:30px minmax(0,1fr) auto;border-radius:9px;transition:transform .2s ease,background .2s ease,color .2s ease;position:relative}
+.extra-chips .chip:hover{background:rgba(80,130,190,.10);transform:translateX(3px);color:#fff}
+.extra-chips .chip:hover .more-icon{transform:rotate(-8deg) scale(1.05)}
+.more-icon{transition:transform .2s ease}
+.section-head{margin:6px 0 14px}.section-head h3{font-size:25px}.section-head p{font-size:12px}
+.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(9,19,32,.92),rgba(6,13,23,.92));border-color:rgba(105,151,210,.18);transition:transform .26s cubic-bezier(.2,.7,.2,1),border-color .26s,box-shadow .26s}.card:hover{transform:translateY(-6px);border-color:rgba(245,197,24,.38);box-shadow:0 20px 46px rgba(0,0,0,.34)}
+.badge{background:rgba(76,156,255,.16);border-color:rgba(108,175,255,.30);color:#8bc5ff}.card h3{font-size:16px}.prompt{font-size:11px;line-height:1.55}.card-actions .small-btn{font-size:10px;padding:8px 9px}
+.pagination .page-btn{transition:transform .2s ease,box-shadow .2s ease}.pagination .page-btn:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+@media(max-width:1100px){.wrap{width:min(100% - 24px,1100px)}.hero-main{padding:34px 34px 30px}.hero-side{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-links{display:none}.menu-toggle{display:grid}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:680px){.wrap{width:calc(100% - 16px)}.hero-main{min-height:430px;padding:26px 22px 24px;background-position:64% center}.hero h2{font-size:36px;letter-spacing:-1.5px}.hero-copy{font-size:12px}.hero-side{grid-template-columns:1fr}.community-card{display:none}.grid{grid-template-columns:1fr}.toolbar{flex-direction:column;align-items:stretch}.sort{width:100%}.extra-chips{top:108px;grid-template-columns:1fr;width:calc(100vw - 24px)}}
+</style>
 </head>
 <body>
 <header><div class="wrap nav">
@@ -68,7 +112,7 @@ html[data-theme="light"] .field input,html[data-theme="light"] .field select,htm
 <main class="wrap">
 <section class="hero" id="home"><div class="hero-grid">
   <div class="hero-main"><div class="eyebrow">AI Prompt Community</div><h2>Turn ideas into <span>better AI creations.</span></h2><p class="hero-copy">Explore ready-to-use prompts for images, cinematic videos, portraits, fantasy, anime and branding — then share your own prompt with the community.</p><div class="hero-actions"><button class="btn primary" onclick="document.getElementById('search').focus()">Explore Prompts →</button><button class="btn ghost" onclick="openModal()">＋ Submit a Prompt</button></div></div>
-  <div class="hero-side"><div class="mini-card"><div class="num" id="heroPrompts">0</div><div class="label">Community prompts</div></div><div class="mini-card accent"><div class="num" id="heroCopies">0</div><div class="label">Total copies</div></div><div class="mini-card"><div class="num" id="heroCreators">0</div><div class="label">Creators</div></div></div>
+  <div class="hero-side"><div class="mini-card"><div class="num" id="heroPrompts">0</div><div class="label">Community prompts</div></div><div class="mini-card accent"><div class="num" id="heroCopies">0</div><div class="label">Total copies</div></div><div class="mini-card"><div class="num" id="heroCreators">0</div><div class="label">Creators</div></div><div class="mini-card community-card"><div class="community-copy">Join our growing community<br><span>and share your creativity.</span></div><div class="community-avatars"><img src="logo.png" alt="Creator"><img src="logo.png" alt="Creator"><img src="logo.png" alt="Creator"><span>＋</span></div></div></div>
 </div></section>
 <section class="toolbar-wrap" id="discover"><div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input class="search" id="search" placeholder="Search prompts, categories or creators…" oninput="applyFilters()"></div><select class="sort" id="sort" onchange="applyFilters()" aria-label="Sort prompts"><option value="latest">Latest</option><option value="popular">Most Liked</option><option value="copied">Most Copied</option><option value="az">A–Z</option></select></div><div id="categories"></div><div class="chips" id="chips"></div><div class="extra-chips" id="extraChips" aria-label="More categories"></div></section>
 <section class="featured" id="featured"></section>
