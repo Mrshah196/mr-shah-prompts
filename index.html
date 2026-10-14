@@ -575,6 +575,33 @@ html[data-theme="light"] .detail-body .card-actions{border-top-color:#dfe3ec}
 .hero-image-only .hero-banner-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain;border-radius:22px;margin:0 auto}
 @media(max-width:640px){.hero.hero-image-only{margin:14px auto 22px;border-radius:14px}.hero-image-only .hero-banner-image{border-radius:14px;aspect-ratio:16/9}}
 </style>
+<style id="cinematic-gold-theme">
+:root{--bg:#07080b;--bg2:#0b0d12;--surface:rgba(18,21,29,.88);--surface2:rgba(24,28,38,.95);--line:rgba(245,197,24,.12);--line2:rgba(245,197,24,.2);--txt:#f6f7fb;--txt2:#c6cad5;--mut:#969aa7;--gold:#f5c518;--gold2:#ffd95a;--shadow:0 24px 70px rgba(0,0,0,.42)}
+html[data-theme="light"]{--gold:#9a6e00;--gold2:#bf8b16}
+body{background:radial-gradient(ellipse at 14% -5%,rgba(245,197,24,.12),transparent 36%),radial-gradient(ellipse at 90% 14%,rgba(245,197,24,.045),transparent 30%),linear-gradient(180deg,#07080b,#0b0d12)!important}
+header{background:rgba(7,8,11,.9)!important;border-bottom-color:rgba(245,197,24,.16)!important}
+.nav-link:hover,.nav-link.active{color:#ffd95a!important;border-color:rgba(245,197,24,.42)!important;background:rgba(245,197,24,.1)!important}
+.btn.primary{background:linear-gradient(135deg,#ffe18a,#f5c518 58%,#d9a40a)!important;color:#171204!important;box-shadow:0 8px 26px rgba(245,197,24,.2)!important}
+.toolbar{background:rgba(17,18,20,.9)!important;border-color:rgba(245,197,24,.2)!important}
+.chip,.sort,.sort-tab,.chips>.chip{border-color:rgba(245,197,24,.22)!important}
+.chips>.chip{background:linear-gradient(160deg,#201d15,#111214)!important;color:#f6f7fb}
+.chips>.chip:hover{border-color:rgba(245,197,24,.58)!important;box-shadow:0 10px 24px rgba(0,0,0,.48),0 0 16px rgba(245,197,24,.18)}
+.chips>.chip.on{color:#211805!important;border-color:#ffe18a!important;background:linear-gradient(180deg,#ffedb0,#f5c518 58%,#d9a40a)!important;box-shadow:0 6px 18px rgba(245,197,24,.3)!important}
+.chips>.chip .pill-icon,.extra-chips .more-icon{background:radial-gradient(circle at 32% 26%,#ffedb0,#f5c518 54%,#a87900)!important;border:1px solid rgba(255,225,130,.6)!important;color:#211805!important;box-shadow:0 4px 10px rgba(0,0,0,.4),inset 0 2px 3px rgba(255,255,255,.6)!important}
+.extra-chips .chip:nth-child(3n+1) .more-icon,.extra-chips .chip:nth-child(3n+2) .more-icon,.extra-chips .chip:nth-child(3n) .more-icon{background:radial-gradient(circle at 32% 26%,#ffedb0,#f5c518 54%,#a87900)!important;border-color:rgba(255,225,130,.6)!important}
+.extra-chips .chip.on{color:#ffe18a!important;background:rgba(245,197,24,.12)!important;box-shadow:inset 3px 0 0 rgba(245,197,24,.62)!important}
+.card,.prompt-card{background:linear-gradient(155deg,rgba(27,24,17,.98),rgba(12,13,15,.98))!important;border-color:rgba(245,197,24,.17)!important}
+.card:hover,.prompt-card:hover{border-color:rgba(245,197,24,.46)!important;box-shadow:0 22px 52px rgba(0,0,0,.38),0 0 20px rgba(245,197,24,.06)!important}
+.card-img{background:radial-gradient(circle at 25% 15%,rgba(245,197,24,.18),transparent 58%),linear-gradient(145deg,#17150f,#0b0c0e)!important}
+.cat-cover{background:radial-gradient(circle at 25% 20%,rgba(245,197,24,.28),transparent 55%),linear-gradient(145deg,#27200e,#0c0d10)!important}
+.cc-icon{color:#ffd95a}
+.cc-name{color:rgba(255,236,180,.95)}
+.media-badge{background:rgba(245,197,24,.95)!important;color:#171204!important}
+.badge{color:#ffe18a!important;background:rgba(245,197,24,.1)!important;border-color:rgba(245,197,24,.32)!important}
+.hero-image-only .hero-banner-image{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:contain}
+@media(prefers-reduced-motion:reduce){.chips>.chip,.extra-chips .chip{animation:none!important;transition:none!important}}
+</style>
+
 </head>
 <body>
 <header><div class="wrap nav">
