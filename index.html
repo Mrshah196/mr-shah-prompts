@@ -168,6 +168,52 @@ html[data-theme="light"] body{background:radial-gradient(ellipse at 12% 0%,rgba(
 html[data-theme="light"] .hero-main{color:#fff!important}html[data-theme="light"] .hero-copy{color:#e3eaf5!important}html[data-theme="light"] .mini-card{background:linear-gradient(145deg,#fff,#f4f8fc)!important}html[data-theme="light"] .mini-card .num{color:#122137!important}html[data-theme="light"] .mini-card .label{color:#61738b!important}
 @media(max-width:900px){.hero-side{grid-template-columns:repeat(2,minmax(0,1fr))!important}.community-card{grid-column:1/-1!important}}
 @media(max-width:640px){.hero-main{min-height:340px!important;padding:28px 22px!important;background-position:58% center!important}.hero h2{font-size:clamp(34px,9vw,48px)!important;letter-spacing:-1.7px!important}.hero-side{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.mini-card{padding:13px!important;min-height:82px!important}.community-card{grid-column:1/-1!important;flex-direction:row!important}}
+
+/* Cinematic Theme #5: visual-only refinements; preserve existing copy and controls */
+:root{
+ --bg:#050710;--bg2:#090d18;
+ --surface:rgba(14,19,32,.80);--surface2:rgba(20,27,43,.90);
+ --line:rgba(255,205,112,.16);--line2:rgba(255,220,160,.25);
+ --gold:#eeb64e;--gold2:#ffd98a;
+ --shadow:0 24px 70px rgba(0,0,0,.48);
+}
+body{
+ background:
+ radial-gradient(ellipse at 82% 8%,rgba(217,143,49,.11),transparent 32%),
+ radial-gradient(ellipse at 12% 0%,rgba(54,90,168,.14),transparent 35%),
+ linear-gradient(180deg,var(--bg),var(--bg2));
+}
+.hero-main{
+ background-image:
+ linear-gradient(90deg,rgba(5,7,16,.97) 0%,rgba(5,7,16,.90) 28%,rgba(5,7,16,.54) 54%,rgba(5,7,16,.13) 100%),
+ linear-gradient(0deg,rgba(6,8,16,.36),transparent 52%),
+ url("hero-photo-hd.webp") !important;
+ background-size:cover;
+ background-repeat:no-repeat;
+ background-position:center 50%;
+ border:1px solid rgba(255,202,102,.28);
+ box-shadow:0 28px 90px rgba(0,0,0,.46),inset 0 0 0 1px rgba(255,255,255,.025);
+}
+.hero-main:after{
+ background:
+ linear-gradient(0deg,rgba(3,5,12,.40),transparent 46%),
+ radial-gradient(ellipse at 80% 45%,rgba(242,174,76,.09),transparent 42%);
+}
+.hero h2 span,.eyebrow{color:var(--gold2)}
+.btn.primary{
+ background:linear-gradient(135deg,#ffe3a0,#eab247);
+ box-shadow:0 8px 28px rgba(228,167,66,.18);
+}
+.btn.primary:hover{box-shadow:0 12px 34px rgba(228,167,66,.27)}
+.category-chip:hover,.extra-chip:hover{
+ border-color:rgba(255,204,112,.42)!important;
+ background:rgba(235,177,75,.13)!important;
+ box-shadow:0 8px 28px rgba(0,0,0,.24);
+}
+@media(max-width:700px){
+ .hero-main{background-position:center 46%;padding:30px 22px;border-radius:18px}
+}
+
 </style>
 
 <style id="mrshah-v2-overrides">
