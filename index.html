@@ -138,6 +138,12 @@ html[data-theme="light"] body{background:radial-gradient(ellipse at 15% -5%,rgba
 @media(max-width:680px){.wrap{width:calc(100% - 24px)}.nav{min-height:68px;gap:10px}.brand .avatar{width:39px;height:39px;border-radius:12px}.brand-copy h1{font-size:16px}.brand-copy p{font-size:9px;letter-spacing:.08em}.nav-actions{gap:6px}.nav-actions .share-top{display:none}.hero{margin:18px 0;padding:26px 20px 30px;border-radius:23px}.hero h2{font-size:clamp(36px,10vw,52px);margin:18px 0 14px}.hero-copy{font-size:14px;line-height:1.75}.hero-actions{gap:9px;margin-top:22px}.hero-actions .btn{flex:1;padding:12px 10px;font-size:12px}.hero-side{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.mini-card{padding:14px;min-height:100px}.mini-card .num{font-size:24px}.community-card{grid-column:1/-1;flex-direction:row;align-items:center}.toolbar-wrap{padding:8px 0 16px}.toolbar{gap:5px;padding:6px;border-radius:15px}.search{height:43px!important;font-size:13px!important;padding-left:35px!important}.search-icon{left:12px!important}.search-go{height:42px;padding:0 13px;font-size:12px}.chips,.extra-chips{display:flex;overflow-x:auto;flex-wrap:nowrap;padding:2px 0 7px;scrollbar-width:thin}.chip,.category-chip,.extra-chip{white-space:nowrap;flex:0 0 auto}.section-head{display:block;margin:24px 0 15px}.sort-tabs{margin-top:14px;width:max-content;max-width:100%}.sort-tab{padding:8px 10px!important}.grid{grid-template-columns:1fr;gap:14px}.prompt-card,.card{border-radius:18px!important}.pagination{margin:24px 0 36px}.foot-grid{gap:22px}.foot-links{gap:12px!important}.site-footer{margin-top:42px!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 
+
+/* Draggable WhatsApp shortcut */
+.wa-float{position:fixed;right:20px;bottom:20px;left:auto;top:auto;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;z-index:1000;transition:box-shadow .2s,transform .2s!important}
+.wa-float.dragging{cursor:grabbing;transition:none!important;transform:scale(1.04);box-shadow:0 15px 38px rgba(0,0,0,.42)!important}
+.wa-float .drag-hint{position:absolute;right:0;bottom:calc(100% + 8px);white-space:nowrap;padding:5px 8px;border-radius:7px;background:rgba(10,15,26,.9);color:#fff;font:11px/1.2 system-ui,sans-serif;opacity:0;pointer-events:none;transition:opacity .2s}
+.wa-float:focus-visible{outline:3px solid #ffe18a;outline-offset:4px}
 </style>
 
 <style id="mrshah-v2-overrides">
@@ -757,4 +763,20 @@ async function promptAlreadyExists(prompt){
 async function submitPrompt(){const title=$("fTitle").value.trim(),prompt=$("fPrompt").value.trim(),category=$("fCategory").value,author=$("fAuthor").value.trim()||"Anonymous";if(!title||!prompt){toast("Title and prompt are required");return}if(!setupOk()||!sb){toast("Supabase is not configured");return}const b=$("submitBtn");b.disabled=true;b.textContent="Checking…";if(await promptAlreadyExists(prompt)){toast("This prompt already exists — duplicate prompts are not allowed.");b.disabled=false;b.textContent="Submit for Review";return}b.textContent="Submitting…";let r=await sb.from("prompts").insert([{title,category,prompt,author,status:"pending"}]);if(r.error&&/status/i.test(r.error.message))r=await sb.from("prompts").insert([{title,category,prompt,author}]);if(r.error){const duplicate=/duplicate|already exists|prompt_no_duplicates/i.test(r.error.message);toast(duplicate?"This prompt already exists — duplicate prompts are not allowed.":"Could not submit: "+r.error.message)}else{closeModal();$("fTitle").value="";$("fPrompt").value="";$("fAuthor").value="";toast("Submitted for admin review ✓")}b.disabled=false;b.textContent="Submit for Review"}
 function setTheme(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("theme",t)}catch(e){}$("themeBtn").textContent=t==="light"?"☀️":"🌙"}function toggleTheme(){setTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light")}
 initChips();bindFilterControls();setTheme(localStorage.getItem("theme")||"dark");loadPrompts();
-</script></body></html>
+</script>
+<script>
+(()=>{
+ const el=document.querySelector('.wa-float'); if(!el)return;
+ const hint=document.createElement('span');hint.className='drag-hint';hint.textContent='Drag to move';el.appendChild(hint);
+ let startX=0,startY=0,originX=0,originY=0,moved=false,dragging=false,pointerId=null;
+ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+ el.addEventListener('pointerdown',e=>{if(e.button!==undefined&&e.button!==0)return;startX=e.clientX;startY=e.clientY;const r=el.getBoundingClientRect();originX=r.left;originY=r.top;moved=false;dragging=false;pointerId=e.pointerId;try{el.setPointerCapture(pointerId)}catch(_){};});
+ el.addEventListener('pointermove',e=>{if(pointerId!==e.pointerId)return;const dx=e.clientX-startX,dy=e.clientY-startY;if(!dragging&&Math.hypot(dx,dy)>7){dragging=true;moved=true;el.classList.add('dragging');hint.style.opacity='1';el.style.left=originX+'px';el.style.top=originY+'px';el.style.right='auto';el.style.bottom='auto'}if(dragging){const r=el.getBoundingClientRect();el.style.left=clamp(originX+dx,4,Math.max(4,innerWidth-r.width-4))+'px';el.style.top=clamp(originY+dy,4,Math.max(4,innerHeight-r.height-4))+'px';}});
+ const finish=e=>{if(pointerId!==e.pointerId)return;pointerId=null;if(dragging){el.classList.remove('dragging');hint.style.opacity='0';try{sessionStorage.setItem('wa-float-position',JSON.stringify({left:el.style.left,top:el.style.top}))}catch(_){};setTimeout(()=>{moved=false},80)}else moved=false;dragging=false;};
+ el.addEventListener('pointerup',finish);el.addEventListener('pointercancel',finish);
+ el.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopImmediatePropagation();moved=false}},true);
+ try{const p=JSON.parse(sessionStorage.getItem('wa-float-position')||'null');if(p&&p.left&&p.top){el.style.left=p.left;el.style.top=p.top;el.style.right='auto';el.style.bottom='auto'}}catch(_){}
+ el.addEventListener('keydown',e=>{if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;e.preventDefault();const r=el.getBoundingClientRect(),step=e.shiftKey?30:10;let x=r.left,y=r.top;if(e.key==='ArrowUp')y-=step;if(e.key==='ArrowDown')y+=step;if(e.key==='ArrowLeft')x-=step;if(e.key==='ArrowRight')x+=step;el.style.left=clamp(x,4,innerWidth-r.width-4)+'px';el.style.top=clamp(y,4,innerHeight-r.height-4)+'px';el.style.right='auto';el.style.bottom='auto'});
+})();
+</script>
+</body></html>
