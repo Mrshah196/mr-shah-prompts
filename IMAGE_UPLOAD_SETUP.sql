@@ -33,3 +33,22 @@ drop policy if exists "Admin delete prompt images" on storage.objects;
 create policy "Admin delete prompt images"
   on storage.objects for delete
   using (bucket_id = 'prompt-images' and auth.role() = 'authenticated');
+
+-- 4. image overrides: kisi bhi prompt (built-in ya community) par manual image
+create table if not exists image_overrides (
+  prompt_key text primary key,
+  image_url text not null,
+  created_at timestamptz default now()
+);
+alter table image_overrides enable row level security;
+
+drop policy if exists "Public read image overrides" on image_overrides;
+create policy "Public read image overrides"
+  on image_overrides for select
+  using (true);
+
+drop policy if exists "Admin manage image overrides" on image_overrides;
+create policy "Admin manage image overrides"
+  on image_overrides for all
+  using (auth.role() = 'authenticated')
+  with check (auth.role() = 'authenticated');
