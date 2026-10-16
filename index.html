@@ -435,6 +435,23 @@ html[data-theme="light"] .read-more{color:#8b6500}
 html[data-theme="light"] .detail-prompt{color:#1c2330;background:#f1f3f8;border-color:#d7dce6}
 html[data-theme="light"] .detail-body .card-actions{border-top-color:#dfe3ec}
 </style>
+<style id="cinematic-theme">
+/* Cinematic theme (#5) — warm black + amber, hero cover, image category cards */
+:root{--bg:#0b0a08;--bg2:#100d09;--surface:rgba(26,22,15,.78);--surface2:rgba(32,27,18,.88);--gold:#f5a623;--gold2:#ffc455}
+body{background:linear-gradient(180deg,#0b0a08,#100d09)}
+html:not([data-theme="light"]) .hero-main{background-image:linear-gradient(90deg,rgba(8,7,5,.96) 0%,rgba(8,7,5,.88) 32%,rgba(8,7,5,.45) 58%,rgba(8,7,5,.10) 100%),url("hero-cinematic.webp")!important;background-position:center 52%!important;border-color:rgba(245,166,35,.28)!important}
+.browse-cats{padding:8px 0 28px}
+.cat-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-top:14px}
+.cat-card{display:block;border-radius:12px;overflow:hidden;background:#28241d;border:1px solid rgba(146,134,110,.35);text-decoration:none;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.cat-card:hover{transform:translateY(-4px);border-color:rgba(245,166,35,.55);box-shadow:0 14px 34px rgba(0,0,0,.42)}
+.cat-card img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#1a1712}
+.cat-card .cat-name{display:block;text-align:center;color:#fff;font-size:13px;font-weight:800;padding:10px 6px 2px}
+.cat-card .cat-count{display:block;text-align:center;color:#a8a094;font-size:11px;padding:0 6px 12px}
+.view-all{color:var(--gold2);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap}
+.view-all:hover{text-decoration:underline}
+@media(max-width:900px){.cat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){.cat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}}
+</style>
 </head>
 <body>
 <header><div class="wrap nav">
@@ -458,6 +475,17 @@ html[data-theme="light"] .detail-body .card-actions{border-top-color:#dfe3ec}
   <div class="hero-main"><div class="eyebrow">👥 AI PROMPT COMMUNITY</div><h2>Turn ideas into <span>better AI creations.</span></h2><p class="hero-copy">Explore ready-to-use prompts for images, cinematic videos, portraits, fantasy, anime and more, then share your own prompt with the community.</p><div class="hero-actions"><button class="btn primary" onclick="document.getElementById('search').focus()">Explore Prompts →</button><button class="btn ghost" onclick="openModal()">＋ Submit a Prompt</button></div></div>
   <div class="hero-side"><div class="mini-card"><span class="stat-ico si-purple">🔍</span><span class="stat-tx"><span class="num" id="heroPrompts">0</span><span class="label">Community prompts</span></span></div><div class="mini-card accent"><span class="stat-ico si-green">📄</span><span class="stat-tx"><span class="num" id="heroCopies">0</span><span class="label">Total copies</span></span></div><div class="mini-card"><span class="stat-ico si-blue">👥</span><span class="stat-tx"><span class="num" id="heroCreators">0</span><span class="label">Creators</span></span></div><div class="mini-card community-card"><div class="community-copy">Join our growing community<br><span>and share your creativity.</span></div><div class="community-avatars"><img src="logo.webp" alt="Creator"><img src="logo.webp" alt="Creator"><img src="logo.webp" alt="Creator"><span>＋</span></div></div></div>
 </div></section>
+<section class="browse-cats" aria-label="Browse categories">
+<div class="section-head"><div><h3>Browse Categories</h3></div><a class="view-all" href="#discover">View All →</a></div>
+<div class="cat-grid">
+<a class="cat-card" href="ai-social-media-prompts.html"><img src="cat-social.webp" alt="Social Media prompts" loading="lazy"><span class="cat-name">Social Media</span><span class="cat-count">500+ Prompts</span></a>
+<a class="cat-card" href="ai-gaming-prompts.html"><img src="cat-gaming.webp" alt="Gaming prompts" loading="lazy"><span class="cat-name">Gaming</span><span class="cat-count">300+ Prompts</span></a>
+<a class="cat-card" href="ai-islamic-prompts.html"><img src="cat-islamic.webp" alt="Islamic prompts" loading="lazy"><span class="cat-name">Islamic</span><span class="cat-count">200+ Prompts</span></a>
+<a class="cat-card" href="ai-pets-animals-prompts.html"><img src="cat-pets.webp" alt="Pets and Animals prompts" loading="lazy"><span class="cat-name">Pets &amp; Animals</span><span class="cat-count">250+ Prompts</span></a>
+<a class="cat-card" href="ai-business-marketing-prompts.html"><img src="cat-business.webp" alt="Business prompts" loading="lazy"><span class="cat-name">Business</span><span class="cat-count">400+ Prompts</span></a>
+<a class="cat-card" href="ai-art-illustration-prompts.html"><img src="cat-art.webp" alt="Art and Illusion prompts" loading="lazy"><span class="cat-name">Art &amp; Illusion</span><span class="cat-count">300+ Prompts</span></a>
+</div>
+</section>
 <section class="toolbar-wrap" id="discover"><div class="toolbar"><div class="search-wrap"><span class="search-icon">⌕</span><input class="search" id="search" type="search" autocomplete="off" placeholder="Search prompts, categories or creators…"></div><button class="search-go" id="searchBtn" type="button">Search</button></div><div id="categories"></div><div class="chips" id="chips"></div><div class="extra-chips" id="extraChips" aria-label="More categories"></div></section>
 <section class="featured" id="featured"></section>
 <section><div class="section-head"><div><h3>🔥 Latest Prompts</h3><p>Fresh and trending AI prompts from our community · <span id="resultInfo">Loading…</span></p></div><div class="sort-tabs"><button class="sort-tab on" onclick="setSort('latest',this)">Latest</button><button class="sort-tab" onclick="setSort('popular',this)">Popular</button><button class="sort-tab" onclick="setSort('copied',this)">Most Copied</button></div></div><div class="grid" id="grid"><div class="empty">Loading prompts…</div></div><div class="pagination" id="pagination"></div></section>
