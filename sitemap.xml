@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://mrshahai.com/</loc><lastmod>2026-10-02</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>https://mrshahai.com/privacy</loc><lastmod>2026-10-02</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
   <url><loc>https://mrshahai.com/terms</loc><lastmod>2026-10-02</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-<url><loc>https://mrshahai.com/ai-portrait-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-cinematic-video-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-anime-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-logo-branding-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-fantasy-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-photography-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/funny-ai-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://mrshahai.com/ai-social-media-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url></urlset>
+  <url><loc>https://mrshahai.com/ai-portrait-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-cinematic-video-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-anime-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-logo-branding-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-fantasy-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-photography-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/funny-ai-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-social-media-prompts</loc><lastmod>2026-10-02</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-fashion-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-islamic-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-wedding-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-nature-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-interior-architecture-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-food-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-product-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-business-marketing-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-pets-animals-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-travel-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-gaming-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-art-illustration-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-3d-cgi-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-cars-vehicles-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-youtube-thumbnail-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-motivation-quotes-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-historical-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-horror-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-sci-fi-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-luxury-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-kids-family-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://mrshahai.com/ai-eid-festival-prompts</loc><lastmod>2026-10-17</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
+</urlset>
