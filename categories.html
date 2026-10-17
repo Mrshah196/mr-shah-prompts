@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>All Categories — Mr Shah Prompts</title>
+<meta name="description" content="Browse all 30 AI prompt categories — Cinematic, Portrait, Gaming, Islamic, Premium Logo & Branding and more."><meta name="theme-color" content="#07080b">
+<link rel="canonical" href="https://mrshahai.com/categories"><link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#07080b;--txt:#f6f7fb;--txt2:#c6cad5;--mut:#858b9a;--gold:#f5c518;--gold2:#ffd95a;--line:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:radial-gradient(circle at 10% 0%,rgba(245,197,24,.08),transparent 32%),linear-gradient(180deg,#07080b,#0b0d12);color:var(--txt);font-family:Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+.wrap{width:min(1100px,calc(100% - 32px));margin:auto}
+header{border-bottom:1px solid var(--line);padding:16px 0}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;color:var(--txt);text-decoration:none;font-weight:800;font-size:18px}
+.brand img{width:44px;height:44px;border-radius:13px;border:1px solid rgba(245,197,24,.5)}.brand span{color:var(--gold)}
+.back{color:var(--gold2);text-decoration:none;font-weight:700;font-size:14px}
+main{padding:44px 0 60px}
+h1{font-size:clamp(28px,5vw,40px);letter-spacing:-1px;margin-bottom:6px}
+.sub{color:var(--mut);font-size:14px;margin-bottom:32px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.cat{display:block;border-radius:14px;overflow:hidden;background:#151a24;border:1px solid var(--line);text-decoration:none;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative}
+.cat:hover{transform:translateY(-4px);border-color:rgba(245,197,24,.5);box-shadow:0 12px 28px rgba(0,0,0,.4)}
+.cat img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block}
+.cat .nm{display:block;padding:10px 12px 2px;font-weight:800;font-size:14px;color:var(--txt)}
+.cat .ct{display:block;padding:0 12px 12px;font-size:12px;color:var(--mut)}
+.prem{position:absolute;top:8px;right:8px;background:linear-gradient(135deg,#ffd95a,#f5c518);color:#241a02;font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+a{color:var(--gold2)}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--mut);font-size:12.5px;text-align:center}
+footer a{color:var(--txt2);text-decoration:none;margin:0 8px}
+</style></head><body>
+<header><div class="wrap top"><a class="brand" href="index.html"><img src="logo.webp" alt="Mr Shah Prompts" width="44" height="44"><div>Mr Shah <span>Prompts</span></div></a><a class="back" href="index.html">← Back to home</a></div></header>
+<main class="wrap">
+<h1>All Categories</h1>
+<div class="sub">30 categories of ready-to-use AI prompts — pick one and start creating.</div>
+<div class="grid" id="catGrid"></div>
+</main>
+<footer><div class="wrap"><a href="index.html">Home</a><a href="about">About</a><a href="privacy">Privacy Policy</a><a href="terms">Terms of Use</a><br>© <span id="yr">2026</span> Mr Shah Prompts. All rights reserved.</div></footer>
+<script>
+const CATS=[
+["Portrait","ai-portrait-prompts","chip-portrait.webp"],
+["Cinematic","ai-cinematic-video-prompts","chip-cinematic.webp"],
+["Photography","ai-photography-prompts","chip-photography.webp"],
+["Fashion","ai-fashion-prompts","chip-fashion.webp"],
+["Anime","ai-anime-prompts","chip-anime.webp"],
+["Fantasy","ai-fantasy-prompts","chip-fantasy.webp"],
+["Logo & Branding","ai-logo-branding-prompts","chip-logo.webp",1],
+["Social Media","ai-social-media-prompts","cat-social.webp"],
+["Funny","funny-ai-prompts","chip-funny.webp"],
+["Islamic","ai-islamic-prompts","cat-islamic.webp"],
+["Wedding","ai-wedding-prompts","chip-wedding.webp"],
+["Nature","ai-nature-prompts","chip-nature.webp"],
+["Interior & Architecture","ai-interior-architecture-prompts","chip-interior.webp"],
+["Food","ai-food-prompts","chip-food.webp"],
+["Product","ai-product-prompts","chip-product.webp"],
+["Business & Marketing","ai-business-marketing-prompts","cat-business.webp"],
+["Pets & Animals","ai-pets-animals-prompts","cat-pets.webp"],
+["Travel","ai-travel-prompts","chip-travel.webp"],
+["Gaming","ai-gaming-prompts","cat-gaming.webp"],
+["Art & Illustration","ai-art-illustration-prompts","cat-art.webp"],
+["3D & CGI","ai-3d-cgi-prompts","chip-3d.webp"],
+["Cars & Vehicles","ai-cars-vehicles-prompts","chip-cars.webp"],
+["YouTube & Thumbnails","ai-youtube-thumbnail-prompts","chip-youtube.webp"],
+["Motivation & Quotes","ai-motivation-quotes-prompts","chip-motivation.webp"],
+["Historical","ai-historical-prompts","chip-historical.webp"],
+["Horror","ai-horror-prompts","chip-horror.webp"],
+["Sci-Fi","ai-sci-fi-prompts","chip-scifi.webp"],
+["Luxury","ai-luxury-prompts","chip-luxury.webp"],
+["Kids & Family","ai-kids-family-prompts","chip-kids.webp"],
+["Eid & Festivals","ai-eid-festival-prompts","chip-eid.webp"]
+];
+document.getElementById("catGrid").innerHTML=CATS.map(c=>
+`<a class="cat" href="${c[1]}"><img src="${c[2]}" alt="${c[0]} prompts" loading="lazy">${c[3]?'<span class="prem">👑 Premium</span>':""}<span class="nm">${c[0]}</span><span class="ct">Explore prompts →</span></a>`
+).join("");
+document.getElementById("yr").textContent=new Date().getFullYear();
+</script>
+</body></html>
