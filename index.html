@@ -478,8 +478,8 @@ html[data-theme="light"] .sort-tab{background:rgba(255,255,255,.92);border-color
 <header><div class="wrap nav">
   <a class="brand" href="#home" onclick="goHome();return false;" style="text-decoration:none;cursor:pointer;color:inherit"><img class="avatar" src="logo.webp" alt="Mr Shah Prompts"><div class="brand-copy"><h1>Mr Shah <span>Prompts</span></h1><p>Discover • Copy • Create</p></div></a>
   <nav class="nav-links" id="navLinks" aria-label="Primary navigation">
-    <a class="nav-link active" href="#home" onclick="closeNav()">Home</a>
-    <a class="nav-link" href="#discover" onclick="closeNav()">Discover</a>
+    <a class="nav-link active" href="#home" onclick="goHome();closeNav();return false;">Home</a>
+    <a class="nav-link" href="#discover" onclick="goDiscover();closeNav();return false;">Discover</a>
     <a class="nav-link" href="categories.html" onclick="closeNav()">Categories</a>
     <button class="nav-link gen-btn" onclick="openGenerator();closeNav()">✦ Prompt Studio</button>
   </nav>
