@@ -614,9 +614,9 @@ function ago(iso){if(!iso)return"recently";const s=Math.max(0,(Date.now()-new Da
 const TINTS=["rgba(245,197,24,.16)","rgba(251,146,60,.16)","rgba(96,165,250,.16)","rgba(192,132,252,.16)","rgba(244,114,182,.16)","rgba(139,92,246,.18)","rgba(45,212,191,.16)","rgba(250,204,21,.15)","rgba(45,212,191,.18)","rgba(250,204,21,.17)"];
 function initChips(){const box=$("chips"),extraBox=$("extraChips");["All","Premium",...CATS,"More"].forEach((c,ci)=>{const b=document.createElement("button");b.className="chip"+(c==="All"?" on":"")+(c==="More"?" more-chip":"");b.dataset.cat=c;b.style.setProperty("--cat-index",ci);if(c!=="More")b.style.setProperty("--tint",TINTS[ci%TINTS.length]);if(c==="More"){b.innerHTML=`<span class="pill-icon">\u22EF</span><span class="pill-text"><span class="pill-name">More</span><span class="pill-count">\u25BE</span></span>`;b.onclick=()=>{const open=extraBox.classList.toggle("show");b.querySelector(".pill-count").textContent=open?"\u25B4":"\u25BE";if(open){[...extraBox.children].forEach(x=>{const cat=x.dataset.cat;if(cat===activeCat)x.classList.add("on")});toast("More categories opened")}}}else{b.innerHTML=`${c==="Premium"?'<span class="pill-icon">\uD83D\uDC51</span>':catIco(c,"pill-icon")}<span class="pill-text"><span class="pill-name">${c}</span><span class="pill-count">(0)</span></span>`;b.onclick=()=>setActiveCategory(c)}box.appendChild(b)});EXTRA_CATS.forEach((c,i)=>{const b=document.createElement("button");b.className="chip";b.style.setProperty("--d",(i*26)+"ms");b.dataset.cat=c;b.innerHTML=`${catIco(c,"more-icon")}<span class="more-label">${c}</span><span class="more-count">(0)</span>`;b.onclick=()=>setActiveCategory(c);extraBox.appendChild(b)});$("fCategory").innerHTML=[...CATS,...EXTRA_CATS].map(c=>`<option>${c}</option>`).join("")}
 function popChip(cat){requestAnimationFrame(()=>{const main=[...document.querySelectorAll('.chips>.chip')];let t=main.find(c=>c.dataset.cat===cat)||main.find(c=>c.dataset.cat==="More");if(!t)return;t.classList.remove("pop3d");void t.offsetWidth;t.classList.add("pop3d");setTimeout(()=>t.classList.remove("pop3d"),800)})}
-function goHome(){setActiveCategory("All");window.scrollTo({top:0,behavior:"smooth"});}
-function goDiscover(){setActiveCategory("All");document.getElementById("grid")?.scrollIntoView({behavior:"smooth",block:"start"});}
-function setActiveCategory(cat){
+function goHome(){setActiveCategory("All",true);window.scrollTo({top:0,behavior:"smooth"});}
+function goDiscover(){setActiveCategory("All",true);document.getElementById("grid")?.scrollIntoView({behavior:"smooth",block:"start"});}
+function setActiveCategory(cat,noScroll){
   activeCat=cat||"All"; currentPage=1;
   const st=document.getElementById("sectionTitle");
   if(st)st.textContent=activeCat==="All"?"🔥 Latest Prompts":activeCat==="Premium"?"👑 Premium Prompts":"📁 "+activeCat+" Prompts";
@@ -624,7 +624,7 @@ function setActiveCategory(cat){
   const more=$("chips").querySelector(".more-chip");
   if(activeCat!=="More"){ $("extraChips").classList.remove("show"); if(more){const a=more.querySelector(".pill-count"); if(a)a.textContent="▾";} }
   applyFilters();
-  setTimeout(()=>document.querySelector(".section-head")?.scrollIntoView({behavior:"smooth",block:"start"}),window.matchMedia("(prefers-reduced-motion:reduce)").matches?0:720);
+  if(!noScroll)setTimeout(()=>document.querySelector(".section-head")?.scrollIntoView({behavior:"smooth",block:"start"}),window.matchMedia("(prefers-reduced-motion:reduce)").matches?0:720);
 }
 function bindFilterControls(){
   const box=$("chips"), extra=$("extraChips"), search=$("search"), btn=$("searchBtn");
@@ -728,4 +728,5 @@ async function promptAlreadyExists(prompt){
 async function submitPrompt(){const title=$("fTitle").value.trim(),prompt=$("fPrompt").value.trim(),category=$("fCategory").value,author=$("fAuthor").value.trim()||"Anonymous";if(!title||!prompt){toast("Title and prompt are required");return}if(!setupOk()||!sb){toast("Supabase is not configured");return}const b=$("submitBtn");b.disabled=true;b.textContent="Checking…";if(await promptAlreadyExists(prompt)){toast("This prompt already exists — duplicate prompts are not allowed.");b.disabled=false;b.textContent="Submit for Review";return}b.textContent="Submitting…";let r=await sb.from("prompts").insert([{title,category,prompt,author,status:"pending"}]);if(r.error&&/status/i.test(r.error.message))r=await sb.from("prompts").insert([{title,category,prompt,author}]);if(r.error){const duplicate=/duplicate|already exists|prompt_no_duplicates/i.test(r.error.message);toast(duplicate?"This prompt already exists — duplicate prompts are not allowed.":"Could not submit: "+r.error.message)}else{closeModal();$("fTitle").value="";$("fPrompt").value="";$("fAuthor").value="";toast("Submitted for admin review ✓")}b.disabled=false;b.textContent="Submit for Review"}
 function setTheme(t){document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("theme",t)}catch(e){}$("themeBtn").textContent=t==="light"?"☀️":"🌙"}function toggleTheme(){setTheme(document.documentElement.getAttribute("data-theme")==="light"?"dark":"light")}
 initChips();bindFilterControls();setTheme(localStorage.getItem("theme")||"dark");loadPrompts();
+try{const qc=new URLSearchParams(location.search).get("cat");if(qc){const all=[...CATS,...EXTRA_CATS];const match=all.find(c=>normalizeCategory(c)===normalizeCategory(qc));if(match)setActiveCategory(match);else if(normalizeCategory(qc)==="premium")setActiveCategory("Premium");}}catch(e){}
 </script></body></html>
