@@ -337,6 +337,24 @@ html[data-theme="light"] .hero-side .mini-card .label{color:#3b4350}
   .chips>.chip{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;overflow:visible!important;padding:0 14px}
   .chips>.chip .pill-text,.chips>.chip .pill-name{overflow:visible!important;text-overflow:clip!important}
 }
+/* Compact homepage summary: keep all five tiles on one row on laptop/desktop */
+@media(min-width:1101px){
+  .hero-side{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+  .hero-side .mini-card{min-width:0;min-height:68px;padding:9px 11px;gap:8px;border-radius:13px}
+  .hero-side .mini-card:not(.community-card){flex-direction:row;justify-content:flex-start;text-align:left}
+  .hero-side .stat-ico{width:34px;height:34px;flex:0 0 34px;font-size:16px}
+  .hero-side .stat-tx{min-width:0;align-items:flex-start}
+  .hero-side .mini-card .num{font-size:23px;line-height:1.05}
+  .hero-side .mini-card .label{font-size:11px;line-height:1.15;white-space:nowrap}
+  .hero-side .community-card{gap:6px}
+  .community-copy{font-size:10px;line-height:1.25}
+  .community-avatars img,.community-avatars span{width:25px;height:25px}
+}
+@media(min-width:681px){
+  /* Keep More at the end of the same category row; overflow scrolls horizontally if needed. */
+  .chips{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden!important;white-space:nowrap;gap:6px;padding-bottom:8px}
+  .chips>.chip{flex:0 0 auto!important;min-width:0!important;padding-left:10px!important;padding-right:10px!important}
+}
 /* Prompt cards: no oversized empty space */
 .card .prompt{min-height:0}
 </style>
