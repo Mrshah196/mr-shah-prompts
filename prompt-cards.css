@@ -1,0 +1,34 @@
+/* Shared prompt-card layout for the homepage and all category pages. */
+.card-img{
+  width:100%;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  background:#0b111b;
+}
+.card-img img{
+  display:block;
+  width:100%;
+  height:100%;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  object-position:center;
+}
+.card-body{
+  display:flex;
+  flex:1 1 auto;
+  min-width:0;
+  flex-direction:column;
+  gap:10px;
+}
+.card-body .card-prompt{margin:0;}
+.card-body .card-actions{margin-top:auto;}
+.card img{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/3;
+  object-fit:cover;
+  object-position:center;
+  margin:0 0 12px;
+  border-radius:10px;
+}
