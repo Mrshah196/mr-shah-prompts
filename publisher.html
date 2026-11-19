@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>FB Publisher — Mr Shah Prompts</title><meta name="robots" content="noindex,nofollow"><link rel="icon" type="image/png" href="logo.png">
+<style>
+:root{--bg:#07080b;--bg2:#0c0f15;--card:rgba(18,22,30,.78);--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.14);--txt:#f6f7fb;--mut:#8c93a3;--gold:#f5c518;--gold2:#ffd95a;--red:#ff7272;--green:#55e58a;--shadow:0 22px 70px rgba(0,0,0,.35)}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--txt);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% 0%,rgba(245,197,24,.08),transparent 30%),linear-gradient(180deg,var(--bg),var(--bg2))}
+.wrap{width:min(980px,calc(100% - 32px));margin:auto}.glass{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.top{padding:26px 0 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.brand img{width:48px;height:48px;border-radius:14px;border:1px solid rgba(245,197,24,.55)}h1{margin:0;font-size:23px;letter-spacing:-.5px}.sub{color:var(--mut);font-size:12px;line-height:1.6}
+.notice{margin:20px 0;padding:13px 15px;border:1px solid rgba(245,197,24,.25);background:rgba(245,197,24,.07);border-radius:14px;color:#f8d85e;font-size:12px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}.stat{padding:18px;border-radius:18px}.stat span{color:var(--mut);font-size:11px}.stat b{display:block;font-size:26px;margin-top:7px;letter-spacing:-1px}
+.card{padding:22px;border-radius:18px;margin:0 0 18px}.card h2{margin:0 0 4px;font-size:18px}.card p{margin:0 0 14px}
+.field{margin:14px 0}.field label{display:block;color:var(--mut);font-size:11px;font-weight:700;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.55);color:var(--txt);padding:12px 13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:130px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(245,197,24,.5);box-shadow:0 0 0 4px rgba(245,197,24,.07)}
+.btn{border:1px solid transparent;border-radius:11px;padding:10px 14px;font-weight:800;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#15120a}.ghost{background:rgba(255,255,255,.035);border-color:var(--line2);color:var(--txt)}.danger{background:rgba(255,70,70,.06);border-color:rgba(255,90,90,.3);color:var(--red)}
+.msg{min-height:18px;font-size:12px;margin-top:10px;line-height:1.5}.msg.err{color:#ff8d8d}.msg.ok{color:var(--green)}
+.pages{display:grid;gap:10px}.page-row{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.page-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}.page-row b{font-size:14px}.page-row .pid{color:var(--mut);font-size:11px}.badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;border:1px solid rgba(85,229,138,.28);color:var(--green);background:rgba(85,229,138,.07);margin-left:auto}
+.result{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6;word-break:break-all}.result.ok{border:1px solid rgba(85,229,138,.28);background:rgba(85,229,138,.06);color:#b9f4cd}.result.err{border:1px solid rgba(255,90,90,.3);background:rgba(255,90,90,.06);color:#ffb3b3}
+.recent{font-size:12px;color:var(--mut);line-height:1.7}.recent a{color:var(--gold2)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media(max-width:620px){.wrap{width:min(100% - 22px,980px)}.stats{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><img src="logo.webp" alt="Mr Shah"><div><h1>FB Publisher</h1><div class="sub">Apne Facebook Pages par post karein — seedha is browser se.</div></div></div>
+    <a class="btn ghost" href="index.html">← Back to Site</a>
+  </div>
+
+  <div class="notice">Preview version — site par upload nahi hui. Token sirf is browser mein save hota hai (localStorage). Ye page Facebook ke ilawa kahin koi call nahi karta, aur is mein koi token ya secret likha hua nahi hai.</div>
+
+  <div class="stats">
+    <div class="stat glass"><span>Connected Pages</span><b id="cPages">0</b></div>
+    <div class="stat glass"><span>Published (is browser se)</span><b id="cPublished">0</b></div>
+  </div>
+
+  <div class="card glass">
+    <h2>1. Token</h2>
+    <p class="sub">Graph API Explorer se banaya hua token yahan paste karein. Token kabhi chat mein ya kisi ko na bhejein.</p>
+    <div class="field"><label>Access Token</label>
+      <div class="row"><input id="token" type="password" placeholder="EAA..." autocomplete="off" style="flex:1"><button class="btn ghost" type="button" onclick="toggleToken()">Show</button></div>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="verifyBtn" onclick="verifyToken()">Verify</button>
+      <button class="btn danger" onclick="disconnect()">Disconnect (token delete karein)</button>
+    </div>
+    <div id="tokenMsg" class="msg"></div>
+  </div>
+
+  <div class="card glass">
+    <h2>2. Pages</h2>
+    <p class="sub">Verify ke baad aap ke Pages yahan dikhenge.</p>
+    <div id="pageList" class="pages"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div>
+  </div>
+
+  <div class="card glass">
+    <h2>3. Composer — Publish Now</h2>
+    <p class="sub">Post likhein, Page chunein, Publish dabayein. Post usi waqt us Page par live ho jayegi.</p>
+    <div class="field"><label>Page</label><select id="pageSelect"><option value="">— pehle token verify karein —</option></select></div>
+    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein…"></textarea></div>
+    <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
+    <div id="publishResult"></div>
+    <div id="recentWrap" style="margin-top:16px"><div class="sub" style="margin-bottom:6px">Recent published posts (is browser se)</div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
+  </div>
+
+  <p class="sub" style="text-align:center;padding:10px 0 30px">FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
+</div>
+
+<script>
+/* FB Publisher — preview (Phase 1, Step 1)
+   Sirf browser se seedha graph.facebook.com par calls hoti hain.
+   Token/page tokens sirf is browser ki localStorage mein save hote hain.
+   Is file mein koi token, secret ya App Secret nahi hai. */
+var GRAPH = "https://graph.facebook.com/v26.0";
+var LS_TOKEN = "fbpub_user_token";
+var LS_PAGES = "fbpub_pages";
+var LS_PUBLISHED = "fbpub_published";
+var $ = function(id){ return document.getElementById(id); };
+
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function setMsg(id, text, kind){ var el = $(id); el.textContent = text || ""; el.className = "msg" + (kind ? " " + kind : ""); }
+function loadPages(){ try { return JSON.parse(localStorage.getItem(LS_PAGES) || "[]"); } catch(e){ return []; } }
+function loadPublished(){ try { return JSON.parse(localStorage.getItem(LS_PUBLISHED) || "[]"); } catch(e){ return []; } }
+function savePublished(list){ localStorage.setItem(LS_PUBLISHED, JSON.stringify(list)); }
+
+function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
+
+function renderPages(){
+  var pages = loadPages();
+  var published = loadPublished();
+  $("cPages").textContent = pages.length;
+  $("cPublished").textContent = published.length;
+  var sel = $("pageSelect");
+  sel.innerHTML = pages.length
+    ? pages.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join("")
+    : '<option value="">— pehle token verify karein —</option>';
+  $("pageList").innerHTML = pages.length
+    ? pages.map(function(p){ return '<div class="page-row"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span></div>'; }).join("")
+    : '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>';
+  $("recentList").innerHTML = published.length
+    ? published.slice().reverse().map(function(p){ return '<div>✓ ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
+    : 'Abhi koi post nahi hui.';
+}
+
+async function graph(path, token, options){
+  var res = await fetch(GRAPH + path, Object.assign({ headers: { "Authorization": "Bearer " + token } }, options || {}));
+  var data = await res.json().catch(function(){ return {}; });
+  if (!res.ok || data.error) {
+    var m = (data.error && data.error.message) || ("HTTP " + res.status);
+    throw new Error(m);
+  }
+  return data;
+}
+
+async function verifyToken(){
+  var token = $("token").value.trim();
+  if (!token) { setMsg("tokenMsg", "Pehle token paste karein.", "err"); return; }
+  var btn = $("verifyBtn"); btn.disabled = true; btn.textContent = "Verifying…";
+  setMsg("tokenMsg", "");
+  try {
+    var data = await graph("/me/accounts?fields=id,name,access_token&limit=100", token);
+    var pages = (data.data || []).map(function(p){ return { id: p.id, name: p.name, access_token: p.access_token }; });
+    if (!pages.length) { setMsg("tokenMsg", "Token theek hai, lekin is se koi Page nahi mila. Explorer mein Pages select kar ke dobara token banayein.", "err"); return; }
+    localStorage.setItem(LS_TOKEN, token);
+    localStorage.setItem(LS_PAGES, JSON.stringify(pages));
+    renderPages();
+    setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+  } catch (e) {
+    setMsg("tokenMsg", "Verify nahi hua: " + e.message, "err");
+  } finally {
+    btn.disabled = false; btn.textContent = "Verify";
+  }
+}
+
+async function publishNow(){
+  var pages = loadPages();
+  var pageId = $("pageSelect").value;
+  var text = $("postText").value.trim();
+  var box = $("publishResult"); box.innerHTML = "";
+  if (!pageId) { box.innerHTML = '<div class="result err">Pehle token verify kar ke Page select karein.</div>'; return; }
+  if (!text) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein.</div>'; return; }
+  var page = pages.find(function(p){ return p.id === pageId; });
+  if (!page || !page.access_token) { box.innerHTML = '<div class="result err">Is Page ka token nahi mila — dobara Verify karein.</div>'; return; }
+  var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
+  try {
+    var res = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + "/feed", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
+      body: JSON.stringify({ message: text })
+    });
+    var data = await res.json().catch(function(){ return {}; });
+    if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
+    var published = loadPublished();
+    published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString() });
+    savePublished(published);
+    renderPages();
+    box.innerHTML = '<div class="result ok">Post live ho gayi! Post ID: ' + esc(data.id) + ' — <a href="https://www.facebook.com/' + esc(data.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Facebook par dekhein</a></div>';
+    $("postText").value = "";
+  } catch (e) {
+    box.innerHTML = '<div class="result err">Post nahi hui: ' + esc(e.message) + '</div>';
+  } finally {
+    btn.disabled = false; btn.textContent = "Publish Now";
+  }
+}
+
+function disconnect(){
+  if (!confirm("Token aur saved Pages is browser se delete kar dein?")) return;
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_PAGES);
+  $("token").value = "";
+  setMsg("tokenMsg", "Disconnected — token delete kar diya gaya.", "");
+  renderPages();
+}
+
+(function init(){
+  var saved = localStorage.getItem(LS_TOKEN);
+  if (saved) { $("token").value = saved; }
+  renderPages();
+})();
+</script>
+</body></html>
