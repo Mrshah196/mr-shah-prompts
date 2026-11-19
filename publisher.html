@@ -10,7 +10,8 @@
 .field{margin:14px 0}.field label{display:block;color:var(--mut);font-size:11px;font-weight:700;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.55);color:var(--txt);padding:12px 13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:130px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(245,197,24,.5);box-shadow:0 0 0 4px rgba(245,197,24,.07)}
 .btn{border:1px solid transparent;border-radius:11px;padding:10px 14px;font-weight:800;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#15120a}.ghost{background:rgba(255,255,255,.035);border-color:var(--line2);color:var(--txt)}.danger{background:rgba(255,70,70,.06);border-color:rgba(255,90,90,.3);color:var(--red)}
 .msg{min-height:18px;font-size:12px;margin-top:10px;line-height:1.5}.msg.err{color:#ff8d8d}.msg.ok{color:var(--green)}
-.pages{display:grid;gap:10px}.page-row{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02)}.page-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}.page-row b{font-size:14px}.page-row .pid{color:var(--mut);font-size:11px}.badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;border:1px solid rgba(85,229,138,.28);color:var(--green);background:rgba(85,229,138,.07);margin-left:auto}
+.pages{display:grid;gap:10px}.page-row{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02);flex-wrap:wrap}.page-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}.page-row b{font-size:14px}.page-row .pid{color:var(--mut);font-size:11px}.badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;border:1px solid rgba(85,229,138,.28);color:var(--green);background:rgba(85,229,138,.07);margin-left:auto}
+.post-toggle{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;white-space:nowrap}.post-toggle input{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;margin:0}.page-row.off{opacity:.55}.page-row.off .badge{border-color:rgba(255,255,255,.15);color:var(--mut);background:transparent}.page-row.off .dot{background:var(--mut)}
 .result{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6;word-break:break-all}.result.ok{border:1px solid rgba(85,229,138,.28);background:rgba(85,229,138,.06);color:#b9f4cd}.result.err{border:1px solid rgba(255,90,90,.3);background:rgba(255,90,90,.06);color:#ffb3b3}
 .recent{font-size:12px;color:var(--mut);line-height:1.7}.recent a{color:var(--gold2)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
@@ -54,7 +55,7 @@
 
   <div class="card glass">
     <h2>2. Pages</h2>
-    <p class="sub">Verify ke baad aap ke Pages yahan dikhenge.</p>
+    <p class="sub">Verify ke baad aap ke Pages yahan dikhenge. Har page ke saath tick karein ke us par post karni hai ya nahi — sirf ON wale pages Composer mein aayenge.</p>
     <div id="pageList" class="pages"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div>
   </div>
 
@@ -82,6 +83,7 @@ var GRAPH = "https://graph.facebook.com/v26.0";
 var LS_TOKEN = "fbpub_user_token";
 var LS_PAGES = "fbpub_pages";
 var LS_PUBLISHED = "fbpub_published";
+var LS_ENABLED = "fbpub_enabled_pages";
 var $ = function(id){ return document.getElementById(id); };
 
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -90,6 +92,29 @@ function loadPages(){ try { return JSON.parse(localStorage.getItem(LS_PAGES) || 
 function loadPublished(){ try { return JSON.parse(localStorage.getItem(LS_PUBLISHED) || "[]"); } catch(e){ return []; } }
 function savePublished(list){ localStorage.setItem(LS_PUBLISHED, JSON.stringify(list)); }
 
+/* Per-page post on/off — selection localStorage mein (page IDs ki list).
+   Koi saved list na ho to sab pages default ON hote hain. */
+function loadEnabled(){ try { var v = JSON.parse(localStorage.getItem(LS_ENABLED) || "null"); return Array.isArray(v) ? v : null; } catch(e){ return null; } }
+function isPageEnabled(id){ var list = loadEnabled(); return list === null ? true : list.indexOf(String(id)) !== -1; }
+function saveEnabled(list){ localStorage.setItem(LS_ENABLED, JSON.stringify(list)); }
+function mergeEnabled(pages){
+  var list = loadEnabled();
+  if (list === null) { saveEnabled(pages.map(function(p){ return String(p.id); })); return; }
+  var changed = false;
+  pages.forEach(function(p){ if (list.indexOf(String(p.id)) === -1) { list.push(String(p.id)); changed = true; } });
+  if (changed) { saveEnabled(list); }
+}
+function togglePage(id, on){
+  var list = loadEnabled();
+  if (list === null) { list = loadPages().map(function(p){ return String(p.id); }); }
+  id = String(id);
+  var i = list.indexOf(id);
+  if (on && i === -1) { list.push(id); }
+  if (!on && i !== -1) { list.splice(i, 1); }
+  saveEnabled(list);
+  renderPages();
+}
+
 function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
 
 function renderPages(){
@@ -97,12 +122,18 @@ function renderPages(){
   var published = loadPublished();
   $("cPages").textContent = pages.length;
   $("cPublished").textContent = published.length;
+  var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
   var sel = $("pageSelect");
-  sel.innerHTML = pages.length
-    ? pages.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join("")
-    : '<option value="">— pehle token verify karein —</option>';
+  sel.innerHTML = !pages.length
+    ? '<option value="">— pehle token verify karein —</option>'
+    : (enabledPages.length
+      ? enabledPages.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join("")
+      : '<option value="">— pehle Section 2 mein kisi page ko ON karein —</option>');
   $("pageList").innerHTML = pages.length
-    ? pages.map(function(p){ return '<div class="page-row"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span></div>'; }).join("")
+    ? pages.map(function(p){
+        var on = isPageEnabled(p.id);
+        return '<div class="page-row' + (on ? '' : ' off') + '"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span><label class="post-toggle"><input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePage(\'' + esc(p.id) + '\', this.checked)"> Post karein</label></div>';
+      }).join("")
     : '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>';
   $("recentList").innerHTML = published.length
     ? published.slice().reverse().map(function(p){ return '<div>✓ ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
@@ -130,6 +161,7 @@ async function verifyToken(){
     if (!pages.length) { setMsg("tokenMsg", "Token theek hai, lekin is se koi Page nahi mila. Explorer mein Pages select kar ke dobara token banayein.", "err"); return; }
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_PAGES, JSON.stringify(pages));
+    mergeEnabled(pages);
     renderPages();
     setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
   } catch (e) {
@@ -148,6 +180,7 @@ async function publishNow(){
   if (!text) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein.</div>'; return; }
   var page = pages.find(function(p){ return p.id === pageId; });
   if (!page || !page.access_token) { box.innerHTML = '<div class="result err">Is Page ka token nahi mila — dobara Verify karein.</div>'; return; }
+  if (!isPageEnabled(pageId)) { box.innerHTML = '<div class="result err">Ye page OFF hai — pehle Section 2 mein isay ON karein.</div>'; return; }
   var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
   try {
     var res = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + "/feed", {
@@ -205,6 +238,7 @@ function loginWithFacebook(){
       if (!pages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
       localStorage.setItem(LS_TOKEN, userToken);
       localStorage.setItem(LS_PAGES, JSON.stringify(pages));
+      mergeEnabled(pages);
       $("token").value = userToken;
       renderPages();
       setMsg("fbMsg", "Login ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
