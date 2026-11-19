@@ -475,6 +475,18 @@ html[data-theme="light"] .chips>.chip.on{border-color:rgba(139,101,0,.6);backgro
 html[data-theme="light"] .chips>.chip:hover{border-color:rgba(139,101,0,.5)}
 html[data-theme="light"] .sort-tab{background:rgba(255,255,255,.92);border-color:rgba(20,25,35,.14);color:#2b3442}
 </style>
+<style id="fbpub-entry">
+/* FB Publisher entry point (preview only): nav link + hero banner card */
+.fbpub-banner{margin:2px 0 16px}
+.fbpub-card{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--txt);padding:18px 22px;border-radius:18px;background:linear-gradient(135deg,rgba(245,197,24,.14),rgba(9,19,32,.94));border:1px solid rgba(245,197,24,.35);box-shadow:var(--shadow);transition:transform .2s ease,border-color .2s ease}
+.fbpub-card:hover{transform:translateY(-3px);border-color:rgba(245,197,24,.55)}
+.fbpub-ico{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;font-size:24px;border-radius:14px;background:rgba(245,197,24,.16);border:1px solid rgba(245,197,24,.35)}
+.fbpub-copy{display:flex;flex-direction:column;gap:4px;min-width:0}
+.fbpub-copy strong{font-size:17px;letter-spacing:-.3px}
+.fbpub-copy span{font-size:12.5px;color:var(--txt2);line-height:1.5}
+.fbpub-cta{margin-left:auto;flex:0 0 auto;font-size:13px;font-weight:800;color:#15120a;background:linear-gradient(135deg,var(--gold2),var(--gold));padding:11px 18px;border-radius:12px;white-space:nowrap}
+@media(max-width:680px){.fbpub-card{flex-wrap:wrap;gap:12px}.fbpub-cta{margin-left:0}}
+</style>
 </head>
 <body>
 <header><div class="wrap nav">
@@ -484,6 +496,7 @@ html[data-theme="light"] .sort-tab{background:rgba(255,255,255,.92);border-color
     <a class="nav-link" href="#discover" onclick="goDiscover();closeNav();return false;">Discover</a>
     <a class="nav-link" href="categories.html" onclick="closeNav()">Categories</a>
     <a class="nav-link" href="blog.html" onclick="closeNav()">Blog</a>
+    <a class="nav-link gen-btn" href="/publisher" onclick="closeNav()">📣 FB Publisher</a>
     <button class="nav-link gen-btn" onclick="openGenerator();closeNav()">✦ Prompt Studio</button>
   </nav>
   <div class="nav-actions">
@@ -498,6 +511,13 @@ html[data-theme="light"] .sort-tab{background:rgba(255,255,255,.92);border-color
   <div class="hero-main"><div class="eyebrow">👥 AI PROMPT COMMUNITY</div><h2>Turn ideas into <span>better AI creations.</span></h2><p class="hero-copy">Explore ready-to-use prompts for images, cinematic videos, portraits, fantasy, anime and more, then share your own prompt with the community.</p><div class="hero-actions"><button class="btn primary" onclick="document.getElementById('search').focus()">Explore Prompts →</button><button class="btn ghost" onclick="openModal()">＋ Submit a Prompt</button></div></div>
   <div class="hero-side"><div class="mini-card"><span class="stat-ico si-purple">🔍</span><span class="stat-tx"><span class="num" id="heroPrompts">0</span><span class="label">Community prompts</span></span></div><div class="mini-card accent"><span class="stat-ico si-green">📄</span><span class="stat-tx"><span class="num" id="heroCopies">0</span><span class="label">Total copies</span></span></div><div class="mini-card"><span class="stat-ico si-blue">👥</span><span class="stat-tx"><span class="num" id="heroCreators">0</span><span class="label">Creators</span></span></div><div class="mini-card"><span class="stat-ico si-red">❤️</span><span class="stat-tx"><span class="num" id="heroLikes">0</span><span class="label">Total likes</span></span></div><div class="mini-card community-card"><div class="community-copy">Join our growing community<br><span>and share your creativity.</span></div><div class="community-avatars"><img src="logo.webp" alt="Creator"><img src="logo.webp" alt="Creator"><img src="logo.webp" alt="Creator"><a href="https://facebook.com/mrshah4196" target="_blank" rel="noopener" aria-label="Follow us on Facebook" class="community-plus">＋</a></div></div></div>
 </div></section>
+<section class="fbpub-banner" aria-label="Free tool: Facebook Publisher">
+<a class="fbpub-card" href="/publisher">
+<span class="fbpub-ico">📣</span>
+<span class="fbpub-copy"><strong>Free Tool: Facebook Publisher</strong><span>Apni Facebook posts likhein, schedule karein aur ek hi jagah se publish karein — bilkul free.</span></span>
+<span class="fbpub-cta">Open Tool →</span>
+</a>
+</section>
 <section class="browse-cats" aria-label="Browse categories">
 <div class="section-head"><div><h3>Browse Categories</h3></div><a class="view-all" href="#discover">View All →</a></div>
 <div class="cat-grid">
