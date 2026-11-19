@@ -37,7 +37,7 @@
     <p class="sub">Apne Facebook account se login karein — aap ke Pages khud load ho jayenge, token paste karne ki zaroorat nahi.</p>
     <div class="row"><button class="btn fb-btn" id="fbLoginBtn" onclick="loginWithFacebook()"><span class="fblogo">f</span> Login with Facebook</button></div>
     <div id="fbMsg" class="msg"></div>
-    <div class="divider"><span>ya token paste karein</span></div>
+    <div class="divider" id="tokenDivider" style="display:none"><span>ya token paste karein</span></div>
   </div>
 
   <div class="card glass" id="tokenCard" style="display:none">
@@ -248,8 +248,8 @@ function loginWithFacebook(){
 }
 
 (function init(){
-  /* Token section sirf admin ke liye — ?admin=1 ho to dikhao, warna chhupao. */
-  if (new URLSearchParams(location.search).get("admin") === "1") { $("tokenCard").style.display = ""; }
+  /* Token section aur divider sirf admin ke liye — ?admin=1 ho to dikhao, warna chhupao. */
+  if (new URLSearchParams(location.search).get("admin") === "1") { $("tokenCard").style.display = ""; $("tokenDivider").style.display = ""; }
   var saved = localStorage.getItem(LS_TOKEN);
   if (saved) { $("token").value = saved; }
   renderPages();
