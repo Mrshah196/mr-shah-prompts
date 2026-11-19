@@ -14,6 +14,8 @@
 .result{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6;word-break:break-all}.result.ok{border:1px solid rgba(85,229,138,.28);background:rgba(85,229,138,.06);color:#b9f4cd}.result.err{border:1px solid rgba(255,90,90,.3);background:rgba(255,90,90,.06);color:#ffb3b3}
 .recent{font-size:12px;color:var(--mut);line-height:1.7}.recent a{color:var(--gold2)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb-btn{background:#1877F2;color:#fff;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:9px}.fb-btn:hover{background:#166fe5}.fb-btn .fblogo{font-size:17px;font-weight:900;line-height:1}
+.divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12px;margin:18px 0 2px}.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line2)}
 @media(max-width:620px){.wrap{width:min(100% - 22px,980px)}.stats{grid-template-columns:repeat(2,1fr)}}
 </style></head><body>
 <div class="wrap">
@@ -22,11 +24,19 @@
     <a class="btn ghost" href="index.html">← Back to Site</a>
   </div>
 
-  <div class="notice">Preview version — site par upload nahi hui. Token sirf is browser mein save hota hai (localStorage). Ye page Facebook ke ilawa kahin koi call nahi karta, aur is mein koi token ya secret likha hua nahi hai.</div>
+  <div class="notice">Preview version — site par upload nahi hui. Token sirf is browser mein save hota hai (localStorage). Ye page Facebook (Graph API aur Facebook Login SDK) ke ilawa kahin koi call nahi karta, aur is mein koi token ya secret likha hua nahi hai.</div>
 
   <div class="stats">
     <div class="stat glass"><span>Connected Pages</span><b id="cPages">0</b></div>
     <div class="stat glass"><span>Published (is browser se)</span><b id="cPublished">0</b></div>
+  </div>
+
+  <div class="card glass">
+    <h2>Login with Facebook</h2>
+    <p class="sub">Apne Facebook account se login karein — aap ke Pages khud load ho jayenge, token paste karne ki zaroorat nahi.</p>
+    <div class="row"><button class="btn fb-btn" id="fbLoginBtn" onclick="loginWithFacebook()"><span class="fblogo">f</span> Login with Facebook</button></div>
+    <div id="fbMsg" class="msg"></div>
+    <div class="divider"><span>ya token paste karein</span></div>
   </div>
 
   <div class="card glass">
@@ -60,6 +70,8 @@
 
   <p class="sub" style="text-align:center;padding:10px 0 30px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
 </div>
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 <script>
 /* Mr Shah FB Publisher — preview (Phase 1, Step 1)
@@ -165,6 +177,39 @@ function disconnect(){
   $("token").value = "";
   setMsg("tokenMsg", "Disconnected — token delete kar diya gaya.", "");
   renderPages();
+}
+
+/* Facebook Login (JS SDK) — visitor apne Facebook account se login kare. */
+window.fbAsyncInit = function(){
+  FB.init({ appId: "1576761261159357", cookie: true, xfbml: false, version: "v26.0" });
+};
+
+function loginWithFacebook(){
+  if (!window.FB) { setMsg("fbMsg", "Facebook SDK abhi load nahi hua — page refresh kar ke dobara try karein.", "err"); return; }
+  var btn = $("fbLoginBtn"); btn.disabled = true; btn.textContent = "Connecting…";
+  setMsg("fbMsg", "");
+  FB.login(function(resp){
+    if (!resp || !resp.authResponse) {
+      setMsg("fbMsg", "Login cancel ho gaya ya ijazat nahi mili — dobara try karein.", "err");
+      btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook';
+      return;
+    }
+    var userToken = resp.authResponse.accessToken;
+    FB.api("/me/accounts?fields=id,name,access_token&limit=100", function(data){
+      btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook';
+      if (!data || data.error) {
+        setMsg("fbMsg", "Pages nahi mile: " + ((data && data.error && data.error.message) || "unknown error"), "err");
+        return;
+      }
+      var pages = (data.data || []).map(function(p){ return { id: p.id, name: p.name, access_token: p.access_token }; });
+      if (!pages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
+      localStorage.setItem(LS_TOKEN, userToken);
+      localStorage.setItem(LS_PAGES, JSON.stringify(pages));
+      $("token").value = userToken;
+      renderPages();
+      setMsg("fbMsg", "Login ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+    });
+  }, { scope: "pages_show_list,pages_manage_posts,pages_manage_engagement,pages_read_engagement" });
 }
 
 (function init(){
