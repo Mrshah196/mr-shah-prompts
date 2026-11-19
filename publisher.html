@@ -17,6 +17,9 @@
 .media-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.4)}
 .media-preview img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin-bottom:10px}
 .media-info{font-size:12px;color:var(--mut);line-height:1.6;word-break:break-all}
+.pick-list{display:grid;gap:8px}
+.pick-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);cursor:pointer;font-size:14px}
+.pick-row input{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;margin:0;flex:none}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .fb-btn{background:#1877F2;color:#fff;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:9px}.fb-btn:hover{background:#166fe5}.fb-btn .fblogo{font-size:17px;font-weight:900;line-height:1}
 .divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12px;margin:18px 0 2px}.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line2)}
@@ -64,8 +67,8 @@
 
   <div class="card glass">
     <h2>3. Composer — Publish Now</h2>
-    <p class="sub">Post likhein, Page chunein, Publish dabayein. Photo ya video attach karna optional hai — post usi waqt us Page par live ho jayegi.</p>
-    <div class="field"><label>Page</label><select id="pageSelect"><option value="">— pehle token verify karein —</option></select></div>
+    <p class="sub">Post likhein, Pages tick karein, Publish dabayein. Photo ya video attach karna optional hai — post usi waqt un Pages par live ho jayegi.</p>
+    <div class="field"><label>Pages — jin par post karni hai, tick karein</label><div id="pagePickList" class="pick-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
     <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
     <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()"><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
@@ -122,18 +125,32 @@ function togglePage(id, on){
 
 function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
 
+/* Composer mein multi-page pick — kaun se ON pages par post karni hai.
+   pickedPages null ho to sab checked (default); user ki tick yaad rehti hai. */
+var pickedPages = null;
+function onPickChange(){
+  pickedPages = Array.prototype.slice.call(document.querySelectorAll('#pagePickList input[type=checkbox]:checked')).map(function(c){ return c.value; });
+}
+function getPickedPages(){
+  var ids = Array.prototype.slice.call(document.querySelectorAll('#pagePickList input[type=checkbox]:checked')).map(function(c){ return c.value; });
+  return loadPages().filter(function(p){ return ids.indexOf(String(p.id)) !== -1; });
+}
+
 function renderPages(){
   var pages = loadPages();
   var published = loadPublished();
   $("cPages").textContent = pages.length;
   $("cPublished").textContent = published.length;
   var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
-  var sel = $("pageSelect");
-  sel.innerHTML = !pages.length
-    ? '<option value="">— pehle token verify karein —</option>'
+  var pick = $("pagePickList");
+  pick.innerHTML = !pages.length
+    ? '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>'
     : (enabledPages.length
-      ? enabledPages.map(function(p){ return '<option value="' + esc(p.id) + '">' + esc(p.name) + '</option>'; }).join("")
-      : '<option value="">— pehle Section 2 mein kisi page ko ON karein —</option>');
+      ? enabledPages.map(function(p){
+          var checked = pickedPages === null ? true : pickedPages.indexOf(String(p.id)) !== -1;
+          return '<label class="pick-row"><input type="checkbox" value="' + esc(p.id) + '"' + (checked ? ' checked' : '') + ' onchange="onPickChange()"> <span>' + esc(p.name) + '</span></label>';
+        }).join("")
+      : '<div class="sub">— pehle Section 2 mein kisi page ko ON karein —</div>');
   $("pageList").innerHTML = pages.length
     ? pages.map(function(p){
         var on = isPageEnabled(p.id);
@@ -167,6 +184,7 @@ async function verifyToken(){
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_PAGES, JSON.stringify(pages));
     mergeEnabled(pages);
+    pickedPages = null;
     renderPages();
     setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
   } catch (e) {
@@ -206,49 +224,54 @@ function clearMedia(){
 }
 
 async function publishNow(){
-  var pages = loadPages();
-  var pageId = $("pageSelect").value;
+  var picked = getPickedPages();
   var text = $("postText").value.trim();
   var box = $("publishResult"); box.innerHTML = "";
-  if (!pageId) { box.innerHTML = '<div class="result err">Pehle token verify kar ke Page select karein.</div>'; return; }
+  if (!picked.length) { box.innerHTML = '<div class="result err">Koi page select nahi — pehle token verify kar ke kisi page ko tick karein.</div>'; return; }
   if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein ya photo/video chunein.</div>'; return; }
-  var page = pages.find(function(p){ return p.id === pageId; });
-  if (!page || !page.access_token) { box.innerHTML = '<div class="result err">Is Page ka token nahi mila — dobara Verify karein.</div>'; return; }
-  if (!isPageEnabled(pageId)) { box.innerHTML = '<div class="result err">Ye page OFF hai — pehle Section 2 mein isay ON karein.</div>'; return; }
   var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
-  try {
-    var kind = "text", data;
-    if (!mediaFile) {
-      var res = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + "/feed", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
-        body: JSON.stringify({ message: text })
-      });
-      data = await res.json().catch(function(){ return {}; });
-      if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
-    } else {
-      var isVideo = mediaFile.type.indexOf("video") === 0;
-      kind = isVideo ? "video" : "photo";
-      var fd = new FormData();
-      fd.append("source", mediaFile);
-      fd.append(isVideo ? "description" : "message", text);
-      fd.append("access_token", page.access_token);
-      var mres = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + (isVideo ? "/videos" : "/photos"), { method: "POST", body: fd });
-      data = await mres.json().catch(function(){ return {}; });
-      if (!mres.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + mres.status)); }
+  var results = [];
+  for (var i = 0; i < picked.length; i++) {
+    var page = picked[i];
+    if (!page.access_token) { results.push({ page: page, err: "Is Page ka token nahi mila — dobara Verify karein." }); continue; }
+    if (!isPageEnabled(page.id)) { results.push({ page: page, err: "Ye page OFF hai — pehle Section 2 mein isay ON karein." }); continue; }
+    try {
+      var kind = "text", data;
+      if (!mediaFile) {
+        var res = await fetch(GRAPH + "/" + encodeURIComponent(page.id) + "/feed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
+          body: JSON.stringify({ message: text })
+        });
+        data = await res.json().catch(function(){ return {}; });
+        if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
+      } else {
+        var isVideo = mediaFile.type.indexOf("video") === 0;
+        kind = isVideo ? "video" : "photo";
+        var fd = new FormData();
+        fd.append("source", mediaFile);
+        fd.append(isVideo ? "description" : "message", text);
+        fd.append("access_token", page.access_token);
+        var mres = await fetch(GRAPH + "/" + encodeURIComponent(page.id) + (isVideo ? "/videos" : "/photos"), { method: "POST", body: fd });
+        data = await mres.json().catch(function(){ return {}; });
+        if (!mres.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + mres.status)); }
+      }
+      var published = loadPublished();
+      published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString(), kind: kind });
+      savePublished(published);
+      results.push({ page: page, id: data.id });
+    } catch (e) {
+      results.push({ page: page, err: e.message });
     }
-    var published = loadPublished();
-    published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString(), kind: kind });
-    savePublished(published);
-    renderPages();
-    box.innerHTML = '<div class="result ok">Post live ho gayi! Post ID: ' + esc(data.id) + ' — <a href="https://www.facebook.com/' + esc(data.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Facebook par dekhein</a></div>';
-    $("postText").value = "";
-    clearMedia();
-  } catch (e) {
-    box.innerHTML = '<div class="result err">Post nahi hui: ' + esc(e.message) + '</div>';
-  } finally {
-    btn.disabled = false; btn.textContent = "Publish Now";
   }
+  renderPages();
+  box.innerHTML = results.map(function(r){
+    if (r.id) { return '<div class="result ok">✓ ' + esc(r.page.name) + ' — Post live! <a href="https://www.facebook.com/' + esc(r.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Post dekhein</a></div>'; }
+    return '<div class="result err">✗ ' + esc(r.page.name) + ' — Post nahi hui: ' + esc(r.err) + '</div>';
+  }).join("");
+  $("postText").value = "";
+  clearMedia();
+  btn.disabled = false; btn.textContent = "Publish Now";
 }
 
 function disconnect(){
@@ -257,6 +280,7 @@ function disconnect(){
   localStorage.removeItem(LS_PAGES);
   $("token").value = "";
   setMsg("tokenMsg", "Disconnected — token delete kar diya gaya.", "");
+  pickedPages = null;
   renderPages();
 }
 
@@ -287,6 +311,7 @@ function loginWithFacebook(){
       localStorage.setItem(LS_TOKEN, userToken);
       localStorage.setItem(LS_PAGES, JSON.stringify(pages));
       mergeEnabled(pages);
+      pickedPages = null;
       $("token").value = userToken;
       renderPages();
       setMsg("fbMsg", "Login ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
