@@ -40,7 +40,7 @@
     <div class="divider"><span>ya token paste karein</span></div>
   </div>
 
-  <div class="card glass">
+  <div class="card glass" id="tokenCard" style="display:none">
     <h2>1. Token</h2>
     <p class="sub">Graph API Explorer se banaya hua token yahan paste karein. Token kabhi chat mein ya kisi ko na bhejein.</p>
     <div class="field"><label>Access Token</label>
@@ -69,7 +69,8 @@
     <div id="recentWrap" style="margin-top:16px"><div class="sub" style="margin-bottom:6px">Recent published posts (is browser se)</div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
   </div>
 
-  <p class="sub" style="text-align:center;padding:10px 0 30px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
+  <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
+  <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none">Admin</a></p>
 </div>
 
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
@@ -247,6 +248,8 @@ function loginWithFacebook(){
 }
 
 (function init(){
+  /* Token section sirf admin ke liye — ?admin=1 ho to dikhao, warna chhupao. */
+  if (new URLSearchParams(location.search).get("admin") === "1") { $("tokenCard").style.display = ""; }
   var saved = localStorage.getItem(LS_TOKEN);
   if (saved) { $("token").value = saved; }
   renderPages();
