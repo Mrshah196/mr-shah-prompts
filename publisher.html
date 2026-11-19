@@ -14,6 +14,9 @@
 .post-toggle{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;white-space:nowrap}.post-toggle input{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;margin:0}.page-row.off{opacity:.55}.page-row.off .badge{border-color:rgba(255,255,255,.15);color:var(--mut);background:transparent}.page-row.off .dot{background:var(--mut)}
 .result{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6;word-break:break-all}.result.ok{border:1px solid rgba(85,229,138,.28);background:rgba(85,229,138,.06);color:#b9f4cd}.result.err{border:1px solid rgba(255,90,90,.3);background:rgba(255,90,90,.06);color:#ffb3b3}
 .recent{font-size:12px;color:var(--mut);line-height:1.7}.recent a{color:var(--gold2)}
+.media-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.4)}
+.media-preview img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin-bottom:10px}
+.media-info{font-size:12px;color:var(--mut);line-height:1.6;word-break:break-all}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .fb-btn{background:#1877F2;color:#fff;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:9px}.fb-btn:hover{background:#166fe5}.fb-btn .fblogo{font-size:17px;font-weight:900;line-height:1}
 .divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12px;margin:18px 0 2px}.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line2)}
@@ -61,9 +64,10 @@
 
   <div class="card glass">
     <h2>3. Composer — Publish Now</h2>
-    <p class="sub">Post likhein, Page chunein, Publish dabayein. Post usi waqt us Page par live ho jayegi.</p>
+    <p class="sub">Post likhein, Page chunein, Publish dabayein. Photo ya video attach karna optional hai — post usi waqt us Page par live ho jayegi.</p>
     <div class="field"><label>Page</label><select id="pageSelect"><option value="">— pehle token verify karein —</option></select></div>
-    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein…"></textarea></div>
+    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
+    <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()"><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
     <div id="publishResult"></div>
     <div id="recentWrap" style="margin-top:16px"><div class="sub" style="margin-bottom:6px">Recent published posts (is browser se)</div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
@@ -137,7 +141,7 @@ function renderPages(){
       }).join("")
     : '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>';
   $("recentList").innerHTML = published.length
-    ? published.slice().reverse().map(function(p){ return '<div>✓ ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
+    ? published.slice().reverse().map(function(p){ var label = p.kind === "photo" ? "Photo" : p.kind === "video" ? "Video" : "Text"; return '<div>✓ [' + label + '] ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
     : 'Abhi koi post nahi hui.';
 }
 
@@ -172,31 +176,74 @@ async function verifyToken(){
   }
 }
 
+/* Photo/video attach — ek file; image ka thumbnail preview, video ka naam + size. */
+var mediaFile = null;
+var mediaObjectUrl = null;
+function onMediaChosen(){
+  var inp = $("mediaFile");
+  var prev = $("mediaPreview");
+  var f = (inp.files && inp.files[0]) || null;
+  if (mediaObjectUrl) { URL.revokeObjectURL(mediaObjectUrl); mediaObjectUrl = null; }
+  mediaFile = f;
+  if (!f) { prev.style.display = "none"; prev.innerHTML = ""; return; }
+  var sizeMB = (f.size / (1024 * 1024)).toFixed(1);
+  var isVideo = f.type.indexOf("video") === 0;
+  var info = '<div class="media-info"><b style="color:var(--txt)">' + esc(f.name) + '</b> · ' + (isVideo ? "Video" : "Photo") + ' · ' + sizeMB + ' MB</div><div class="row" style="margin-top:10px"><button class="btn ghost" type="button" onclick="clearMedia()">Hata dein</button></div>';
+  if (!isVideo && f.type.indexOf("image") === 0) {
+    mediaObjectUrl = URL.createObjectURL(f);
+    prev.innerHTML = '<img src="' + mediaObjectUrl + '" alt="photo preview">' + info;
+  } else {
+    prev.innerHTML = info;
+  }
+  prev.style.display = "block";
+}
+function clearMedia(){
+  mediaFile = null;
+  if (mediaObjectUrl) { URL.revokeObjectURL(mediaObjectUrl); mediaObjectUrl = null; }
+  $("mediaFile").value = "";
+  var prev = $("mediaPreview");
+  prev.style.display = "none"; prev.innerHTML = "";
+}
+
 async function publishNow(){
   var pages = loadPages();
   var pageId = $("pageSelect").value;
   var text = $("postText").value.trim();
   var box = $("publishResult"); box.innerHTML = "";
   if (!pageId) { box.innerHTML = '<div class="result err">Pehle token verify kar ke Page select karein.</div>'; return; }
-  if (!text) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein.</div>'; return; }
+  if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein ya photo/video chunein.</div>'; return; }
   var page = pages.find(function(p){ return p.id === pageId; });
   if (!page || !page.access_token) { box.innerHTML = '<div class="result err">Is Page ka token nahi mila — dobara Verify karein.</div>'; return; }
   if (!isPageEnabled(pageId)) { box.innerHTML = '<div class="result err">Ye page OFF hai — pehle Section 2 mein isay ON karein.</div>'; return; }
   var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
   try {
-    var res = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + "/feed", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
-      body: JSON.stringify({ message: text })
-    });
-    var data = await res.json().catch(function(){ return {}; });
-    if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
+    var kind = "text", data;
+    if (!mediaFile) {
+      var res = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + "/feed", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
+        body: JSON.stringify({ message: text })
+      });
+      data = await res.json().catch(function(){ return {}; });
+      if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
+    } else {
+      var isVideo = mediaFile.type.indexOf("video") === 0;
+      kind = isVideo ? "video" : "photo";
+      var fd = new FormData();
+      fd.append("source", mediaFile);
+      fd.append(isVideo ? "description" : "message", text);
+      fd.append("access_token", page.access_token);
+      var mres = await fetch(GRAPH + "/" + encodeURIComponent(pageId) + (isVideo ? "/videos" : "/photos"), { method: "POST", body: fd });
+      data = await mres.json().catch(function(){ return {}; });
+      if (!mres.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + mres.status)); }
+    }
     var published = loadPublished();
-    published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString() });
+    published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString(), kind: kind });
     savePublished(published);
     renderPages();
     box.innerHTML = '<div class="result ok">Post live ho gayi! Post ID: ' + esc(data.id) + ' — <a href="https://www.facebook.com/' + esc(data.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Facebook par dekhein</a></div>';
     $("postText").value = "";
+    clearMedia();
   } catch (e) {
     box.innerHTML = '<div class="result err">Post nahi hui: ' + esc(e.message) + '</div>';
   } finally {
