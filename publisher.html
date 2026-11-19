@@ -17,9 +17,9 @@
 .media-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.4)}
 .media-preview img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin-bottom:10px}
 .media-info{font-size:12px;color:var(--mut);line-height:1.6;word-break:break-all}
-.pick-list{display:grid;gap:8px}
-.pick-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);cursor:pointer;font-size:14px}
-.pick-row input{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;margin:0;flex:none}
+.target-list{display:grid;gap:8px}
+.target-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);font-size:14px}
+.target-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .fb-btn{background:#1877F2;color:#fff;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:9px}.fb-btn:hover{background:#166fe5}.fb-btn .fblogo{font-size:17px;font-weight:900;line-height:1}
 .divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12px;margin:18px 0 2px}.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line2)}
@@ -67,8 +67,8 @@
 
   <div class="card glass">
     <h2>3. Composer — Publish Now</h2>
-    <p class="sub">Post likhein, Pages tick karein, Publish dabayein. Photo ya video attach karna optional hai — post usi waqt un Pages par live ho jayegi.</p>
-    <div class="field"><label>Pages — jin par post karni hai, tick karein</label><div id="pagePickList" class="pick-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
+    <p class="sub">Post likhein, Publish dabayein — post usi waqt Section 2 mein ON pages par live ho jayegi. Photo ya video attach karna optional hai.</p>
+    <div class="field"><label>Post in pages par jayegi:</label><div id="targetList" class="target-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
     <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
     <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()"><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
@@ -125,15 +125,11 @@ function togglePage(id, on){
 
 function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
 
-/* Composer mein multi-page pick — kaun se ON pages par post karni hai.
-   pickedPages null ho to sab checked (default); user ki tick yaad rehti hai. */
-var pickedPages = null;
-function onPickChange(){
-  pickedPages = Array.prototype.slice.call(document.querySelectorAll('#pagePickList input[type=checkbox]:checked')).map(function(c){ return c.value; });
-}
-function getPickedPages(){
-  var ids = Array.prototype.slice.call(document.querySelectorAll('#pagePickList input[type=checkbox]:checked')).map(function(c){ return c.value; });
-  return loadPages().filter(function(p){ return ids.indexOf(String(p.id)) !== -1; });
+/* Composer ke publish targets — sirf Section 2 mein ON pages.
+   Toggle badalte hi renderPages() dobara chalta hai, is liye ye list
+   foran sync ho jati hai (OFF page gayab, ON page aa jata hai). */
+function getTargetPages(){
+  return loadPages().filter(function(p){ return isPageEnabled(p.id); });
 }
 
 function renderPages(){
@@ -142,13 +138,12 @@ function renderPages(){
   $("cPages").textContent = pages.length;
   $("cPublished").textContent = published.length;
   var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
-  var pick = $("pagePickList");
-  pick.innerHTML = !pages.length
+  var target = $("targetList");
+  target.innerHTML = !pages.length
     ? '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>'
     : (enabledPages.length
       ? enabledPages.map(function(p){
-          var checked = pickedPages === null ? true : pickedPages.indexOf(String(p.id)) !== -1;
-          return '<label class="pick-row"><input type="checkbox" value="' + esc(p.id) + '"' + (checked ? ' checked' : '') + ' onchange="onPickChange()"> <span>' + esc(p.name) + '</span></label>';
+          return '<div class="target-row"><span class="dot"></span><span>' + esc(p.name) + '</span></div>';
         }).join("")
       : '<div class="sub">— pehle Section 2 mein kisi page ko ON karein —</div>');
   $("pageList").innerHTML = pages.length
@@ -184,7 +179,6 @@ async function verifyToken(){
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_PAGES, JSON.stringify(pages));
     mergeEnabled(pages);
-    pickedPages = null;
     renderPages();
     setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
   } catch (e) {
@@ -224,10 +218,10 @@ function clearMedia(){
 }
 
 async function publishNow(){
-  var picked = getPickedPages();
+  var picked = getTargetPages();
   var text = $("postText").value.trim();
   var box = $("publishResult"); box.innerHTML = "";
-  if (!picked.length) { box.innerHTML = '<div class="result err">Koi page select nahi — pehle token verify kar ke kisi page ko tick karein.</div>'; return; }
+  if (!picked.length) { box.innerHTML = '<div class="result err">Koi page ON nahi — pehle Section 2 mein kisi page ko ON karein.</div>'; return; }
   if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein ya photo/video chunein.</div>'; return; }
   var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
   var results = [];
@@ -280,7 +274,6 @@ function disconnect(){
   localStorage.removeItem(LS_PAGES);
   $("token").value = "";
   setMsg("tokenMsg", "Disconnected — token delete kar diya gaya.", "");
-  pickedPages = null;
   renderPages();
 }
 
@@ -311,7 +304,6 @@ function loginWithFacebook(){
       localStorage.setItem(LS_TOKEN, userToken);
       localStorage.setItem(LS_PAGES, JSON.stringify(pages));
       mergeEnabled(pages);
-      pickedPages = null;
       $("token").value = userToken;
       renderPages();
       setMsg("fbMsg", "Login ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
