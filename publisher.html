@@ -74,7 +74,7 @@
     <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()"><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
     <div id="publishResult"></div>
-    <div id="recentWrap" style="margin-top:16px"><div class="sub" style="margin-bottom:6px">Recent published posts (is browser se)</div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
+    <div id="recentWrap" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div class="sub">Recent published posts (is browser se)</div><button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="clearHistory()">History saaf karein</button></div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
   </div>
 
   <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
@@ -272,11 +272,20 @@ async function publishNow(){
 }
 
 function disconnect(){
-  if (!confirm("Token aur saved Pages is browser se delete kar dein?")) return;
+  if (!confirm("Token, saved Pages aur published history is browser se delete kar dein?")) return;
   localStorage.removeItem(LS_TOKEN);
   localStorage.removeItem(LS_PAGES);
+  localStorage.removeItem(LS_PUBLISHED);
   $("token").value = "";
-  setMsg("tokenMsg", "Disconnected — token delete kar diya gaya.", "");
+  setMsg("tokenMsg", "Disconnected — token aur history delete kar di gayi.", "");
+  renderPages();
+}
+
+/* Sirf published history saaf karein — token aur Pages ko haath nahi lagata. */
+function clearHistory(){
+  if (!loadPublished().length) return;
+  if (!confirm("Published history saaf kar dein? (Token aur Pages waisi hi rahenge.)")) return;
+  localStorage.removeItem(LS_PUBLISHED);
   renderPages();
 }
 
