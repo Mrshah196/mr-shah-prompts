@@ -17,6 +17,13 @@
 .media-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.4)}
 .media-preview img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin-bottom:10px}
 .media-info{font-size:12px;color:var(--mut);line-height:1.6;word-break:break-all}
+.upload-box{display:flex;align-items:center;gap:14px;padding:16px;border:2px dashed rgba(245,197,24,.45);border-radius:16px;background:linear-gradient(180deg,rgba(245,197,24,.07),rgba(4,6,9,.35));cursor:pointer;transition:.2s}
+.upload-box:hover,.upload-box:focus-visible{border-color:var(--gold);background:linear-gradient(180deg,rgba(245,197,24,.13),rgba(4,6,9,.35));box-shadow:0 8px 26px rgba(245,197,24,.14);outline:none}
+.upload-icons{display:flex;gap:8px;flex:none}
+.upload-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--gold2),var(--gold) 55%,#d9a400);box-shadow:0 6px 14px rgba(245,197,24,.35),inset 0 1px 0 rgba(255,255,255,.55)}
+.upload-ic svg{width:24px;height:24px;stroke:#15120a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.upload-txt b{display:block;font-size:14px;color:var(--txt)}
+.upload-txt span{font-size:12px;color:var(--mut)}
 .target-list{display:grid;gap:8px}
 .target-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);font-size:14px;flex-wrap:wrap}
 .target-row span{overflow-wrap:anywhere;min-width:0}
@@ -63,6 +70,7 @@
   <div class="card glass">
     <h2>2. Pages</h2>
     <p class="sub">Verify ke baad aap ke Pages yahan dikhenge. Har page ke saath tick karein ke us par post karni hai ya nahi — sirf ON wale pages Composer mein aayenge.</p>
+    <div style="margin-bottom:10px"><button class="btn ghost" id="selectAllBtn" type="button" onclick="toggleSelectAll()">Sab select karein</button></div>
     <div id="pageList" class="pages"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div>
   </div>
 
@@ -71,7 +79,7 @@
     <p class="sub">Post likhein, Publish dabayein — post usi waqt Section 2 mein ON pages par live ho jayegi. Photo ya video attach karna optional hai.</p>
     <div class="field"><label>Post in pages par jayegi:</label><div id="targetList" class="target-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
     <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
-    <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()"><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
+    <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()" style="display:none"><div class="upload-box" role="button" tabindex="0" onclick="$('mediaFile').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();$('mediaFile').click()}"><div class="upload-icons"><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="M17 10l5-3v10l-5-3z"/></svg></span></div><div class="upload-txt"><b>Photo ya video chunein</b><span>Click karein — photo ya video attach karein</span></div></div><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
     <div id="publishResult"></div>
     <div id="recentWrap" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div class="sub">Recent published posts (is browser se)</div><button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="clearHistory()">History saaf karein</button></div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
@@ -124,6 +132,21 @@ function togglePage(id, on){
   renderPages();
 }
 
+/* Sab select karein / Sab hatayein — ek click mein saare pages ON ya OFF.
+   Label renderPages() mein state ke mutabiq badalta hai. */
+function allPagesEnabled(){
+  var pages = loadPages();
+  if (!pages.length) { return false; }
+  return pages.every(function(p){ return isPageEnabled(p.id); });
+}
+function toggleSelectAll(){
+  var pages = loadPages();
+  if (!pages.length) { return; }
+  if (allPagesEnabled()) { saveEnabled([]); }
+  else { saveEnabled(pages.map(function(p){ return String(p.id); })); }
+  renderPages();
+}
+
 function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
 
 /* Composer ke publish targets — sirf Section 2 mein ON pages.
@@ -138,6 +161,8 @@ function renderPages(){
   var published = loadPublished();
   $("cPages").textContent = pages.length;
   $("cPublished").textContent = published.length;
+  var selBtn = $("selectAllBtn");
+  if (selBtn) { selBtn.textContent = (pages.length && allPagesEnabled()) ? "Sab hatayein" : "Sab select karein"; }
   var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
   var target = $("targetList");
   target.innerHTML = !pages.length
