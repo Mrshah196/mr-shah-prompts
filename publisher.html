@@ -87,7 +87,7 @@
   </div>
 
   <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — your token stays only in your browser.</p>
-  <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none">Admin</a></p>
+  <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none;display:none">Admin</a></p>
 </div>
 
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
@@ -394,6 +394,9 @@ function loginWithFacebook(){
      (returning admin). "How to use" and "Back to Site" stay public. */
   var adminBtn = $("adminBtn");
   if (adminBtn && (new URLSearchParams(location.search).get("admin") === "1" || saved)) { adminBtn.style.display = ""; }
+  /* The footer Admin link is hidden from the public too — same condition. */
+  var adminLink = $("adminLink");
+  if (adminLink && (new URLSearchParams(location.search).get("admin") === "1" || saved)) { adminLink.style.display = ""; }
   if (saved) { $("token").value = saved; }
   renderPages();
 })();
