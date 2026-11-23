@@ -168,14 +168,30 @@ async function graph(path, token, options){
   return data;
 }
 
+/* /me/accounts ki saari pages — paging.next (after cursor) ko follow kare
+   jab tak saare pages na aa jayein. Har call mein limit=100 rehta hai.
+   Pages ki koi ginati hardcoded nahi — 5 hon ya 500, sab aate hain. */
+async function fetchAllAccounts(token){
+  var all = [];
+  var after = null;
+  for (var i = 0; i < 20; i++) {
+    var path = "/me/accounts?fields=id,name,access_token&limit=100" + (after ? "&after=" + encodeURIComponent(after) : "");
+    var data = await graph(path, token);
+    (data.data || []).forEach(function(p){ all.push({ id: p.id, name: p.name, access_token: p.access_token }); });
+    var nextAfter = data.paging && data.paging.cursors && data.paging.cursors.after;
+    if (!(data.paging && data.paging.next && nextAfter)) break;
+    after = nextAfter;
+  }
+  return all;
+}
+
 async function verifyToken(){
   var token = $("token").value.trim();
   if (!token) { setMsg("tokenMsg", "Pehle token paste karein.", "err"); return; }
   var btn = $("verifyBtn"); btn.disabled = true; btn.textContent = "Verifying…";
   setMsg("tokenMsg", "");
   try {
-    var data = await graph("/me/accounts?fields=id,name,access_token&limit=100", token);
-    var pages = (data.data || []).map(function(p){ return { id: p.id, name: p.name, access_token: p.access_token }; });
+    var pages = await fetchAllAccounts(token);
     if (!pages.length) { setMsg("tokenMsg", "Token theek hai, lekin is se koi Page nahi mila. Explorer mein Pages select kar ke dobara token banayein.", "err"); return; }
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_PAGES, JSON.stringify(pages));
@@ -298,28 +314,45 @@ function loginWithFacebook(){
   if (!window.FB) { setMsg("fbMsg", "Facebook SDK abhi load nahi hua — page refresh kar ke dobara try karein.", "err"); return; }
   var btn = $("fbLoginBtn"); btn.disabled = true; btn.textContent = "Connecting…";
   setMsg("fbMsg", "");
+  /* Timeout sirf FB.api wale hisse par hai (login dialog user ke apne
+     waqt par chalta hai, us par timeout nahi). Kisi bhi FB.api call ka
+     jawab 15 second mein na aaye to button wapas dabane ke qaabil ho
+     jaye aur timeout ka message dikhe — "Connecting…" par atka na rahe. */
+  var done = false, timer = null;
+  function restoreBtn(){ btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook'; }
+  function failLogin(msg){ if (done) return; done = true; if (timer) clearTimeout(timer); restoreBtn(); setMsg("fbMsg", msg, "err"); }
+  function armTimer(){ if (timer) clearTimeout(timer); timer = setTimeout(function(){ failLogin("Facebook se jawab nahi aaya (15 second timeout) — dobara try karein."); }, 15000); }
   FB.login(function(resp){
+    if (done) return;
     if (!resp || !resp.authResponse) {
-      setMsg("fbMsg", "Login cancel ho gaya ya ijazat nahi mili — dobara try karein.", "err");
-      btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook';
+      failLogin("Login cancel ho gaya ya ijazat nahi mili — dobara try karein.");
       return;
     }
     var userToken = resp.authResponse.accessToken;
-    FB.api("/me/accounts?fields=id,name,access_token&limit=100", function(data){
-      btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook';
-      if (!data || data.error) {
-        setMsg("fbMsg", "Pages nahi mile: " + ((data && data.error && data.error.message) || "unknown error"), "err");
-        return;
-      }
-      var pages = (data.data || []).map(function(p){ return { id: p.id, name: p.name, access_token: p.access_token }; });
-      if (!pages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
-      localStorage.setItem(LS_TOKEN, userToken);
-      localStorage.setItem(LS_PAGES, JSON.stringify(pages));
-      mergeEnabled(pages);
-      $("token").value = userToken;
-      renderPages();
-      setMsg("fbMsg", "Login ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
-    });
+    var allPages = [];
+    /* /me/accounts ki saari pages — paging.next (after cursor) follow kare. */
+    function fetchPage(after){
+      if (done) return;
+      armTimer();
+      var path = "/me/accounts?fields=id,name,access_token&limit=100" + (after ? "&after=" + encodeURIComponent(after) : "");
+      FB.api(path, function(data){
+        if (done) return;
+        if (timer) clearTimeout(timer);
+        if (!data || data.error) { failLogin("Pages nahi mile: " + ((data && data.error && data.error.message) || "unknown error")); return; }
+        (data.data || []).forEach(function(p){ allPages.push({ id: p.id, name: p.name, access_token: p.access_token }); });
+        var nextAfter = data.paging && data.paging.cursors && data.paging.cursors.after;
+        if (data.paging && data.paging.next && nextAfter && allPages.length < 2000) { fetchPage(nextAfter); return; }
+        done = true; restoreBtn();
+        if (!allPages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
+        localStorage.setItem(LS_TOKEN, userToken);
+        localStorage.setItem(LS_PAGES, JSON.stringify(allPages));
+        mergeEnabled(allPages);
+        $("token").value = userToken;
+        renderPages();
+        setMsg("fbMsg", "Login ho gaya — " + allPages.length + " page(s) connected: " + allPages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+      });
+    }
+    fetchPage(null);
   }, { scope: "pages_show_list,pages_manage_posts,pages_manage_engagement,pages_read_engagement" });
 }
 
