@@ -90,7 +90,37 @@
   <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none;display:none">Admin</a></p>
 </div>
 
-<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+<script>
+/* Facebook SDK loader with automatic retry — on slow or blocked networks
+   (e.g. connect.facebook.net unreachable) the script may fail to load, so
+   a failed load retries 3 times, 2 seconds apart. */
+var FB_SDK_URL = "https://connect.facebook.net/en_US/sdk.js";
+var __fbSdkTries = 0;
+var __fbSdkLoading = false;
+function loadFbSdk(force){
+  if (window.FB) return;
+  if (__fbSdkLoading && !force) return;
+  if (!force && __fbSdkTries >= 4) return; /* 1 first try + 3 retries */
+  if (force) { __fbSdkTries = 0; __fbSdkLoading = false; }
+  __fbSdkTries++;
+  __fbSdkLoading = true;
+  var old = document.getElementById("fb-sdk-script");
+  if (old && old.parentNode) { old.parentNode.removeChild(old); }
+  var s = document.createElement("script");
+  s.id = "fb-sdk-script";
+  s.async = true;
+  s.defer = true;
+  s.crossOrigin = "anonymous";
+  s.src = FB_SDK_URL;
+  s.onload = function(){ __fbSdkLoading = false; };
+  s.onerror = function(){
+    __fbSdkLoading = false;
+    if (__fbSdkTries < 4) { setTimeout(function(){ loadFbSdk(false); }, 2000); }
+  };
+  document.head.appendChild(s);
+}
+loadFbSdk();
+</script>
 
 <script>
 /* Mr Shah FB Publisher (Phase 1, Step 1)
@@ -338,7 +368,24 @@ window.fbAsyncInit = function(){
 };
 
 function loginWithFacebook(){
-  if (!window.FB) { setMsg("fbMsg", "The Facebook SDK has not loaded yet — refresh the page and try again.", "err"); return; }
+  if (!window.FB) {
+    /* SDK not loaded yet (slow or blocked network) — try loading it again,
+       then wait up to ~10 seconds before giving up with a clear message. */
+    var waitBtn = $("fbLoginBtn"); waitBtn.disabled = true; waitBtn.textContent = "Loading Facebook…";
+    setMsg("fbMsg", "Loading Facebook — please wait…");
+    if (typeof loadFbSdk === "function") { loadFbSdk(true); }
+    var waited = 0;
+    var waitTimer = setInterval(function(){
+      waited += 500;
+      if (window.FB) { clearInterval(waitTimer); setMsg("fbMsg", ""); loginWithFacebook(); return; }
+      if (waited >= 10000) {
+        clearInterval(waitTimer);
+        waitBtn.disabled = false; waitBtn.innerHTML = '<span class="fblogo">f</span> Login with Facebook';
+        setMsg("fbMsg", "Facebook SDK could not load — please disable your ad-blocker for this site or try mobile data, then refresh the page.", "err");
+      }
+    }, 500);
+    return;
+  }
   var btn = $("fbLoginBtn"); btn.disabled = true; btn.textContent = "Connecting…";
   setMsg("fbMsg", "");
   /* The timeout applies only to the FB.api part (the login dialog runs
