@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Mr Shah FB Publisher — Mr Shah Prompts</title><meta name="robots" content="noindex,nofollow"><link rel="icon" type="image/png" href="logo.png">
+<style>
+:root{--bg:#07080b;--bg2:#0c0f15;--card:rgba(18,22,30,.78);--line:rgba(255,255,255,.09);--line2:rgba(255,255,255,.14);--txt:#f6f7fb;--mut:#8c93a3;--gold:#f5c518;--gold2:#ffd95a;--red:#ff7272;--green:#55e58a;--shadow:0 22px 70px rgba(0,0,0,.35)}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--txt);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:radial-gradient(circle at 10% 0%,rgba(245,197,24,.08),transparent 30%),linear-gradient(180deg,var(--bg),var(--bg2))}
+.wrap{width:min(980px,calc(100% - 32px));margin:auto}.glass{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.top{padding:26px 0 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.brand img{width:48px;height:48px;border-radius:14px;border:1px solid rgba(245,197,24,.55)}h1{margin:0;font-size:23px;letter-spacing:-.5px}.sub{color:var(--mut);font-size:12px;line-height:1.6}
+.notice{margin:20px 0;padding:13px 15px;border:1px solid rgba(245,197,24,.25);background:rgba(245,197,24,.07);border-radius:14px;color:#f8d85e;font-size:12px;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.stat{padding:18px;border-radius:18px}.stat span{color:var(--mut);font-size:11px}.stat b{display:block;font-size:26px;margin-top:7px;letter-spacing:-1px}
+.card{padding:22px;border-radius:18px;margin:0 0 18px}.card h2{margin:0 0 4px;font-size:18px}.card p{margin:0 0 14px}
+.field{margin:14px 0}.field label{display:block;color:var(--mut);font-size:11px;font-weight:700;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.55);color:var(--txt);padding:12px 13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:130px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(245,197,24,.5);box-shadow:0 0 0 4px rgba(245,197,24,.07)}
+.btn{border:1px solid transparent;border-radius:11px;padding:10px 14px;font-weight:800;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#15120a}.ghost{background:rgba(255,255,255,.035);border-color:var(--line2);color:var(--txt)}.danger{background:rgba(255,70,70,.06);border-color:rgba(255,90,90,.3);color:var(--red)}
+.msg{min-height:18px;font-size:12px;margin-top:10px;line-height:1.5}.msg.err{color:#ff8d8d}.msg.ok{color:var(--green)}
+.pages{display:grid;gap:10px}.page-row{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.02);flex-wrap:wrap}.page-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}.page-row b{font-size:14px}.page-row .pid{color:var(--mut);font-size:11px}.badge{display:inline-flex;border-radius:999px;padding:5px 9px;font-size:9px;font-weight:850;letter-spacing:.7px;text-transform:uppercase;border:1px solid rgba(85,229,138,.28);color:var(--green);background:rgba(85,229,138,.07);margin-left:auto}
+.post-toggle{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--txt);cursor:pointer;white-space:nowrap}.post-toggle input{accent-color:var(--gold);width:17px;height:17px;cursor:pointer;margin:0}.page-row.off{opacity:.55}.page-row.off .badge{border-color:rgba(255,255,255,.15);color:var(--mut);background:transparent}.page-row.off .dot{background:var(--mut)}
+.result{margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6;word-break:break-all}.result.ok{border:1px solid rgba(85,229,138,.28);background:rgba(85,229,138,.06);color:#b9f4cd}.result.err{border:1px solid rgba(255,90,90,.3);background:rgba(255,90,90,.06);color:#ffb3b3}
+.recent{font-size:12px;color:var(--mut);line-height:1.7}.recent a{color:var(--gold2)}
+.media-preview{display:none;margin-top:12px;padding:12px;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.4)}
+.media-preview img{max-width:100%;max-height:220px;border-radius:10px;display:block;margin-bottom:10px}
+.media-info{font-size:12px;color:var(--mut);line-height:1.6;word-break:break-all}
+.upload-box{display:flex;align-items:center;gap:14px;padding:16px;border:2px dashed rgba(245,197,24,.45);border-radius:16px;background:linear-gradient(180deg,rgba(245,197,24,.07),rgba(4,6,9,.35));cursor:pointer;transition:.2s}
+.upload-box:hover,.upload-box:focus-visible{border-color:var(--gold);background:linear-gradient(180deg,rgba(245,197,24,.13),rgba(4,6,9,.35));box-shadow:0 8px 26px rgba(245,197,24,.14);outline:none}
+.upload-icons{display:flex;gap:8px;flex:none}
+.upload-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,var(--gold2),var(--gold) 55%,#d9a400);box-shadow:0 6px 14px rgba(245,197,24,.35),inset 0 1px 0 rgba(255,255,255,.55)}
+.upload-ic svg{width:24px;height:24px;stroke:#15120a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.upload-txt b{display:block;font-size:14px;color:var(--txt)}
+.upload-txt span{font-size:12px;color:var(--mut)}
+.target-list{display:grid;gap:8px}
+.target-row{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.02);font-size:14px;flex-wrap:wrap}
+.target-row span{overflow-wrap:anywhere;min-width:0}
+.target-row .dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex:none}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb-btn{background:#1877F2;color:#fff;font-size:14px;padding:12px 20px;display:inline-flex;align-items:center;gap:9px}.fb-btn:hover{background:#166fe5}.fb-btn .fblogo{font-size:17px;font-weight:900;line-height:1}
+.divider{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:12px;margin:18px 0 2px}.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line2)}
+@media(max-width:620px){.wrap{width:min(100% - 22px,980px)}.stats{grid-template-columns:repeat(2,1fr)}}
+</style></head><body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand"><img src="logo.webp" alt="Mr Shah"><div><h1>Mr Shah FB Publisher</h1><div class="sub">Apne Facebook Pages par post karein — seedha is browser se.</div></div></div>
+    <div class="row"><a class="btn ghost" href="?admin=1">Admin</a><a class="btn ghost" href="index.html">← Back to Site</a></div>
+  </div>
+
+  <div class="notice">Preview version — site par upload nahi hui. Token sirf is browser mein save hota hai (localStorage). Ye page Facebook (Graph API aur Facebook Login SDK) ke ilawa kahin koi call nahi karta, aur is mein koi token ya secret likha hua nahi hai.</div>
+
+  <div class="stats">
+    <div class="stat glass"><span>Connected Pages</span><b id="cPages">0</b></div>
+    <div class="stat glass"><span>Post ke liye select</span><b id="cSelected">0</b></div>
+    <div class="stat glass"><span>Published (is browser se)</span><b id="cPublished">0</b></div>
+  </div>
+
+  <div class="card glass">
+    <h2>Login with Facebook</h2>
+    <p class="sub">Apne Facebook account se login karein — aap ke Pages khud load ho jayenge, token paste karne ki zaroorat nahi.</p>
+    <div class="row"><button class="btn fb-btn" id="fbLoginBtn" onclick="loginWithFacebook()"><span class="fblogo">f</span> Login with Facebook</button></div>
+    <div id="fbMsg" class="msg"></div>
+    <div class="divider" id="tokenDivider" style="display:none"><span>ya token paste karein</span></div>
+  </div>
+
+  <div class="card glass" id="tokenCard" style="display:none">
+    <h2>1. Token</h2>
+    <p class="sub">Graph API Explorer se banaya hua token yahan paste karein. Token kabhi chat mein ya kisi ko na bhejein.</p>
+    <div class="field"><label>Access Token</label>
+      <div class="row"><input id="token" type="password" placeholder="EAA..." autocomplete="off" style="flex:1"><button class="btn ghost" type="button" onclick="toggleToken()">Show</button></div>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="verifyBtn" onclick="verifyToken()">Verify</button>
+      <button class="btn danger" onclick="disconnect()">Disconnect (token delete karein)</button>
+    </div>
+    <div id="tokenMsg" class="msg"></div>
+  </div>
+
+  <div class="card glass">
+    <h2>2. Pages</h2>
+    <p class="sub">Verify ke baad aap ke Pages yahan dikhenge. Har page ke saath tick karein ke us par post karni hai ya nahi — sirf ON wale pages Composer mein aayenge.</p>
+    <div style="margin-bottom:10px"><button class="btn ghost" id="selectAllBtn" type="button" onclick="toggleSelectAll()">Sab select karein</button></div>
+    <div id="pageList" class="pages"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div>
+  </div>
+
+  <div class="card glass">
+    <h2>3. Composer — Publish Now</h2>
+    <p class="sub">Post likhein, Publish dabayein — post usi waqt Section 2 mein ON pages par live ho jayegi. Photo ya video attach karna optional hai.</p>
+    <div class="field"><label>Post in pages par jayegi:</label><div id="targetList" class="target-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
+    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
+    <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()" style="display:none"><div class="upload-box" role="button" tabindex="0" onclick="$('mediaFile').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();$('mediaFile').click()}"><div class="upload-icons"><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="M17 10l5-3v10l-5-3z"/></svg></span></div><div class="upload-txt"><b>Photo ya video chunein</b><span>Click karein — photo ya video attach karein</span></div></div><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
+    <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
+    <div id="publishResult"></div>
+    <div id="recentWrap" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div class="sub">Recent published posts (is browser se)</div><button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="clearHistory()">History saaf karein</button></div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
+  </div>
+
+  <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
+  <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none">Admin</a></p>
+</div>
+
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
+<script>
+/* Mr Shah FB Publisher — preview (Phase 1, Step 1)
+   Sirf browser se seedha graph.facebook.com par calls hoti hain.
+   Token/page tokens sirf is browser ki localStorage mein save hote hain.
+   Is file mein koi token, secret ya App Secret nahi hai. */
+var GRAPH = "https://graph.facebook.com/v26.0";
+var LS_TOKEN = "fbpub_user_token";
+var LS_PAGES = "fbpub_pages";
+var LS_PUBLISHED = "fbpub_published";
+var LS_ENABLED = "fbpub_enabled_pages";
+var $ = function(id){ return document.getElementById(id); };
+
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function setMsg(id, text, kind){ var el = $(id); el.textContent = text || ""; el.className = "msg" + (kind ? " " + kind : ""); }
+function loadPages(){ try { return JSON.parse(localStorage.getItem(LS_PAGES) || "[]"); } catch(e){ return []; } }
+function loadPublished(){ try { return JSON.parse(localStorage.getItem(LS_PUBLISHED) || "[]"); } catch(e){ return []; } }
+function savePublished(list){ localStorage.setItem(LS_PUBLISHED, JSON.stringify(list)); }
+
+/* Per-page post on/off — selection localStorage mein (page IDs ki list).
+   Koi saved list na ho to sab pages default ON hote hain. */
+function loadEnabled(){ try { var v = JSON.parse(localStorage.getItem(LS_ENABLED) || "null"); return Array.isArray(v) ? v : null; } catch(e){ return null; } }
+function isPageEnabled(id){ var list = loadEnabled(); return list === null ? true : list.indexOf(String(id)) !== -1; }
+function saveEnabled(list){ localStorage.setItem(LS_ENABLED, JSON.stringify(list)); }
+function mergeEnabled(pages){
+  var list = loadEnabled();
+  if (list === null) { saveEnabled(pages.map(function(p){ return String(p.id); })); return; }
+  var changed = false;
+  pages.forEach(function(p){ if (list.indexOf(String(p.id)) === -1) { list.push(String(p.id)); changed = true; } });
+  if (changed) { saveEnabled(list); }
+}
+function togglePage(id, on){
+  var list = loadEnabled();
+  if (list === null) { list = loadPages().map(function(p){ return String(p.id); }); }
+  id = String(id);
+  var i = list.indexOf(id);
+  if (on && i === -1) { list.push(id); }
+  if (!on && i !== -1) { list.splice(i, 1); }
+  saveEnabled(list);
+  renderPages();
+}
+
+/* Sab select karein / Sab hatayein — ek click mein saare pages ON ya OFF.
+   Label renderPages() mein state ke mutabiq badalta hai. */
+function allPagesEnabled(){
+  var pages = loadPages();
+  if (!pages.length) { return false; }
+  return pages.every(function(p){ return isPageEnabled(p.id); });
+}
+function toggleSelectAll(){
+  var pages = loadPages();
+  if (!pages.length) { return; }
+  if (allPagesEnabled()) { saveEnabled([]); }
+  else { saveEnabled(pages.map(function(p){ return String(p.id); })); }
+  renderPages();
+}
+
+function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
+
+/* Composer ke publish targets — sirf Section 2 mein ON pages.
+   Toggle badalte hi renderPages() dobara chalta hai, is liye ye list
+   foran sync ho jati hai (OFF page gayab, ON page aa jata hai). */
+function getTargetPages(){
+  return loadPages().filter(function(p){ return isPageEnabled(p.id); });
+}
+
+function renderPages(){
+  var pages = loadPages();
+  var published = loadPublished();
+  $("cPages").textContent = pages.length;
+  $("cPublished").textContent = published.length;
+  var selBtn = $("selectAllBtn");
+  if (selBtn) { selBtn.textContent = (pages.length && allPagesEnabled()) ? "Sab hatayein" : "Sab select karein"; }
+  var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
+  $("cSelected").textContent = enabledPages.length;
+  var target = $("targetList");
+  target.innerHTML = !pages.length
+    ? '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>'
+    : (enabledPages.length
+      ? enabledPages.map(function(p){
+          return '<div class="target-row"><span class="dot"></span><span>' + esc(p.name) + '</span></div>';
+        }).join("")
+      : '<div class="sub">— pehle Section 2 mein kisi page ko ON karein —</div>');
+  $("pageList").innerHTML = pages.length
+    ? pages.map(function(p){
+        var on = isPageEnabled(p.id);
+        return '<div class="page-row' + (on ? '' : ' off') + '"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span><label class="post-toggle"><input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePage(\'' + esc(p.id) + '\', this.checked)"> Post karein</label></div>';
+      }).join("")
+    : '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>';
+  $("recentList").innerHTML = published.length
+    ? published.slice().reverse().map(function(p){ var label = p.kind === "photo" ? "Photo" : p.kind === "video" ? "Video" : "Text"; return '<div>✓ [' + label + '] ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
+    : 'Abhi koi post nahi hui.';
+}
+
+async function graph(path, token, options){
+  var res = await fetch(GRAPH + path, Object.assign({ headers: { "Authorization": "Bearer " + token } }, options || {}));
+  var data = await res.json().catch(function(){ return {}; });
+  if (!res.ok || data.error) {
+    var m = (data.error && data.error.message) || ("HTTP " + res.status);
+    throw new Error(m);
+  }
+  return data;
+}
+
+/* /me/accounts ki saari pages — paging.next (after cursor) ko follow kare
+   jab tak saare pages na aa jayein. Har call mein limit=100 rehta hai.
+   Pages ki koi ginati hardcoded nahi — 5 hon ya 500, sab aate hain. */
+async function fetchAllAccounts(token){
+  var all = [];
+  var after = null;
+  for (var i = 0; i < 20; i++) {
+    var path = "/me/accounts?fields=id,name,access_token&limit=100" + (after ? "&after=" + encodeURIComponent(after) : "");
+    var data = await graph(path, token);
+    (data.data || []).forEach(function(p){ all.push({ id: p.id, name: p.name, access_token: p.access_token }); });
+    var nextAfter = data.paging && data.paging.cursors && data.paging.cursors.after;
+    if (!(data.paging && data.paging.next && nextAfter)) break;
+    after = nextAfter;
+  }
+  return all;
+}
+
+async function verifyToken(){
+  var token = $("token").value.trim();
+  if (!token) { setMsg("tokenMsg", "Pehle token paste karein.", "err"); return; }
+  var btn = $("verifyBtn"); btn.disabled = true; btn.textContent = "Verifying…";
+  setMsg("tokenMsg", "");
+  try {
+    var pages = await fetchAllAccounts(token);
+    if (!pages.length) { setMsg("tokenMsg", "Token theek hai, lekin is se koi Page nahi mila. Explorer mein Pages select kar ke dobara token banayein.", "err"); return; }
+    localStorage.setItem(LS_TOKEN, token);
+    localStorage.setItem(LS_PAGES, JSON.stringify(pages));
+    mergeEnabled(pages);
+    renderPages();
+    setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+  } catch (e) {
+    setMsg("tokenMsg", "Verify nahi hua: " + e.message, "err");
+  } finally {
+    btn.disabled = false; btn.textContent = "Verify";
+  }
+}
+
+/* Photo/video attach — ek file; image ka thumbnail preview, video ka naam + size. */
+var mediaFile = null;
+var mediaObjectUrl = null;
+function onMediaChosen(){
+  var inp = $("mediaFile");
+  var prev = $("mediaPreview");
+  var f = (inp.files && inp.files[0]) || null;
+  if (mediaObjectUrl) { URL.revokeObjectURL(mediaObjectUrl); mediaObjectUrl = null; }
+  mediaFile = f;
+  if (!f) { prev.style.display = "none"; prev.innerHTML = ""; return; }
+  var sizeMB = (f.size / (1024 * 1024)).toFixed(1);
+  var isVideo = f.type.indexOf("video") === 0;
+  var info = '<div class="media-info"><b style="color:var(--txt)">' + esc(f.name) + '</b> · ' + (isVideo ? "Video" : "Photo") + ' · ' + sizeMB + ' MB</div><div class="row" style="margin-top:10px"><button class="btn ghost" type="button" onclick="clearMedia()">Hata dein</button></div>';
+  if (!isVideo && f.type.indexOf("image") === 0) {
+    mediaObjectUrl = URL.createObjectURL(f);
+    prev.innerHTML = '<img src="' + mediaObjectUrl + '" alt="photo preview">' + info;
+  } else {
+    prev.innerHTML = info;
+  }
+  prev.style.display = "block";
+}
+function clearMedia(){
+  mediaFile = null;
+  if (mediaObjectUrl) { URL.revokeObjectURL(mediaObjectUrl); mediaObjectUrl = null; }
+  $("mediaFile").value = "";
+  var prev = $("mediaPreview");
+  prev.style.display = "none"; prev.innerHTML = "";
+}
+
+async function publishNow(){
+  var picked = getTargetPages();
+  var text = $("postText").value.trim();
+  var box = $("publishResult"); box.innerHTML = "";
+  if (!picked.length) { box.innerHTML = '<div class="result err">Koi page ON nahi — pehle Section 2 mein kisi page ko ON karein.</div>'; return; }
+  if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein ya photo/video chunein.</div>'; return; }
+  var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
+  var results = [];
+  for (var i = 0; i < picked.length; i++) {
+    var page = picked[i];
+    if (!page.access_token) { results.push({ page: page, err: "Is Page ka token nahi mila — dobara Verify karein." }); continue; }
+    if (!isPageEnabled(page.id)) { results.push({ page: page, err: "Ye page OFF hai — pehle Section 2 mein isay ON karein." }); continue; }
+    try {
+      var kind = "text", data;
+      if (!mediaFile) {
+        var res = await fetch(GRAPH + "/" + encodeURIComponent(page.id) + "/feed", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + page.access_token },
+          body: JSON.stringify({ message: text })
+        });
+        data = await res.json().catch(function(){ return {}; });
+        if (!res.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + res.status)); }
+      } else {
+        var isVideo = mediaFile.type.indexOf("video") === 0;
+        kind = isVideo ? "video" : "photo";
+        var fd = new FormData();
+        fd.append("source", mediaFile);
+        fd.append(isVideo ? "description" : "message", text);
+        fd.append("access_token", page.access_token);
+        var mres = await fetch(GRAPH + "/" + encodeURIComponent(page.id) + (isVideo ? "/videos" : "/photos"), { method: "POST", body: fd });
+        data = await mres.json().catch(function(){ return {}; });
+        if (!mres.ok || data.error) { throw new Error((data.error && data.error.message) || ("HTTP " + mres.status)); }
+      }
+      var published = loadPublished();
+      published.push({ postId: data.id, pageName: page.name, when: new Date().toLocaleString(), kind: kind });
+      savePublished(published);
+      results.push({ page: page, id: data.id });
+    } catch (e) {
+      results.push({ page: page, err: e.message });
+    }
+  }
+  renderPages();
+  box.innerHTML = results.map(function(r){
+    if (r.id) { return '<div class="result ok">✓ ' + esc(r.page.name) + ' — Post live! <a href="https://www.facebook.com/' + esc(r.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Post dekhein</a></div>'; }
+    return '<div class="result err">✗ ' + esc(r.page.name) + ' — Post nahi hui: ' + esc(r.err) + '</div>';
+  }).join("");
+  /* Sab pages par post kamyab ho to text + media saaf karo; agar koi page
+     fail hua ho to text waisa hi rehne do taake dobara likhna na pare. */
+  var allOk = results.length && results.every(function(r){ return !!r.id; });
+  if (allOk) { $("postText").value = ""; clearMedia(); }
+  btn.disabled = false; btn.textContent = "Publish Now";
+}
+
+function disconnect(){
+  if (!confirm("Token, saved Pages aur published history is browser se delete kar dein?")) return;
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_PAGES);
+  localStorage.removeItem(LS_PUBLISHED);
+  $("token").value = "";
+  setMsg("tokenMsg", "Disconnected — token aur history delete kar di gayi.", "");
+  renderPages();
+}
+
+/* Sirf published history saaf karein — token aur Pages ko haath nahi lagata. */
+function clearHistory(){
+  if (!loadPublished().length) return;
+  if (!confirm("Published history saaf kar dein? (Token aur Pages waisi hi rahenge.)")) return;
+  localStorage.removeItem(LS_PUBLISHED);
+  renderPages();
+}
+
+/* Facebook Login (JS SDK) — visitor apne Facebook account se login kare. */
+window.fbAsyncInit = function(){
+  FB.init({ appId: "1576761261159357", cookie: true, xfbml: false, version: "v26.0" });
+};
+
+function loginWithFacebook(){
+  if (!window.FB) { setMsg("fbMsg", "Facebook SDK abhi load nahi hua — page refresh kar ke dobara try karein.", "err"); return; }
+  var btn = $("fbLoginBtn"); btn.disabled = true; btn.textContent = "Connecting…";
+  setMsg("fbMsg", "");
+  /* Timeout sirf FB.api wale hisse par hai (login dialog user ke apne
+     waqt par chalta hai, us par timeout nahi). Kisi bhi FB.api call ka
+     jawab 15 second mein na aaye to button wapas dabane ke qaabil ho
+     jaye aur timeout ka message dikhe — "Connecting…" par atka na rahe. */
+  var done = false, timer = null;
+  function restoreBtn(){ btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook'; }
+  function failLogin(msg){ if (done) return; done = true; if (timer) clearTimeout(timer); restoreBtn(); setMsg("fbMsg", msg, "err"); }
+  function armTimer(){ if (timer) clearTimeout(timer); timer = setTimeout(function(){ failLogin("Facebook se jawab nahi aaya (15 second timeout) — dobara try karein."); }, 15000); }
+  FB.login(function(resp){
+    if (done) return;
+    if (!resp || !resp.authResponse) {
+      failLogin("Login cancel ho gaya ya ijazat nahi mili — dobara try karein.");
+      return;
+    }
+    var userToken = resp.authResponse.accessToken;
+    var allPages = [];
+    /* /me/accounts ki saari pages — paging.next (after cursor) follow kare. */
+    function fetchPage(after){
+      if (done) return;
+      armTimer();
+      var path = "/me/accounts?fields=id,name,access_token&limit=100" + (after ? "&after=" + encodeURIComponent(after) : "");
+      FB.api(path, function(data){
+        if (done) return;
+        if (timer) clearTimeout(timer);
+        if (!data || data.error) { failLogin("Pages nahi mile: " + ((data && data.error && data.error.message) || "unknown error")); return; }
+        (data.data || []).forEach(function(p){ allPages.push({ id: p.id, name: p.name, access_token: p.access_token }); });
+        var nextAfter = data.paging && data.paging.cursors && data.paging.cursors.after;
+        if (data.paging && data.paging.next && nextAfter && allPages.length < 2000) { fetchPage(nextAfter); return; }
+        done = true; restoreBtn();
+        if (!allPages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
+        localStorage.setItem(LS_TOKEN, userToken);
+        localStorage.setItem(LS_PAGES, JSON.stringify(allPages));
+        mergeEnabled(allPages);
+        $("token").value = userToken;
+        renderPages();
+        setMsg("fbMsg", "Login ho gaya — " + allPages.length + " page(s) connected: " + allPages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+      });
+    }
+    fetchPage(null);
+  }, { scope: "pages_show_list,pages_manage_posts,pages_manage_engagement,pages_read_engagement" });
+}
+
+(function init(){
+  /* Token section aur divider sirf admin ke liye — ?admin=1 ho, ya is browser
+     mein pehle se token save ho (returning admin), to dikhao; warna chhupao.
+     Fresh visitor ko kabhi token section nahi dikhta. */
+  var saved = localStorage.getItem(LS_TOKEN);
+  if (new URLSearchParams(location.search).get("admin") === "1" || saved) { $("tokenCard").style.display = ""; $("tokenDivider").style.display = ""; }
+  if (saved) { $("token").value = saved; }
+  renderPages();
+})();
+</script>
+</body></html>
