@@ -5,7 +5,7 @@
 .wrap{width:min(980px,calc(100% - 32px));margin:auto}.glass{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .top{padding:26px 0 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.brand img{width:48px;height:48px;border-radius:14px;border:1px solid rgba(245,197,24,.55)}h1{margin:0;font-size:23px;letter-spacing:-.5px}.sub{color:var(--mut);font-size:12px;line-height:1.6}
 .notice{margin:20px 0;padding:13px 15px;border:1px solid rgba(245,197,24,.25);background:rgba(245,197,24,.07);border-radius:14px;color:#f8d85e;font-size:12px;line-height:1.6}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0}.stat{padding:18px;border-radius:18px}.stat span{color:var(--mut);font-size:11px}.stat b{display:block;font-size:26px;margin-top:7px;letter-spacing:-1px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.stat{padding:18px;border-radius:18px}.stat span{color:var(--mut);font-size:11px}.stat b{display:block;font-size:26px;margin-top:7px;letter-spacing:-1px}
 .card{padding:22px;border-radius:18px;margin:0 0 18px}.card h2{margin:0 0 4px;font-size:18px}.card p{margin:0 0 14px}
 .field{margin:14px 0}.field label{display:block;color:var(--mut);font-size:11px;font-weight:700;margin-bottom:7px}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line2);border-radius:12px;background:rgba(4,6,9,.55);color:var(--txt);padding:12px 13px;font:inherit;font-size:14px;outline:none}.field textarea{min-height:130px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(245,197,24,.5);box-shadow:0 0 0 4px rgba(245,197,24,.07)}
 .btn{border:1px solid transparent;border-radius:11px;padding:10px 14px;font-weight:800;font-size:12px;cursor:pointer;transition:.2s;font-family:inherit}.btn:hover{transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#15120a}.ghost{background:rgba(255,255,255,.035);border-color:var(--line2);color:var(--txt)}.danger{background:rgba(255,70,70,.06);border-color:rgba(255,90,90,.3);color:var(--red)}
@@ -43,6 +43,7 @@
 
   <div class="stats">
     <div class="stat glass"><span>Connected Pages</span><b id="cPages">0</b></div>
+    <div class="stat glass"><span>Post ke liye select</span><b id="cSelected">0</b></div>
     <div class="stat glass"><span>Published (is browser se)</span><b id="cPublished">0</b></div>
   </div>
 
@@ -164,6 +165,7 @@ function renderPages(){
   var selBtn = $("selectAllBtn");
   if (selBtn) { selBtn.textContent = (pages.length && allPagesEnabled()) ? "Sab hatayein" : "Sab select karein"; }
   var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
+  $("cSelected").textContent = enabledPages.length;
   var target = $("targetList");
   target.innerHTML = !pages.length
     ? '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>'
