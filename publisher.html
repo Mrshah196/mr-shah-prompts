@@ -35,68 +35,68 @@
 </style></head><body>
 <div class="wrap">
   <div class="top">
-    <div class="brand"><img src="logo.webp" alt="Mr Shah"><div><h1>Mr Shah FB Publisher</h1><div class="sub">Apne Facebook Pages par post karein — seedha is browser se.</div></div></div>
+    <div class="brand"><img src="logo.webp" alt="Mr Shah"><div><h1>Mr Shah FB Publisher</h1><div class="sub">Post to your Facebook Pages — right from this browser.</div></div></div>
     <div class="row"><a class="btn ghost" href="publisher-how-to-use.html">How to use</a><a class="btn ghost" href="?admin=1">Admin</a><a class="btn ghost" href="index.html">← Back to Site</a></div>
   </div>
 
-  <div class="notice">Preview version — site par upload nahi hui. Token sirf is browser mein save hota hai (localStorage). Ye page Facebook (Graph API aur Facebook Login SDK) ke ilawa kahin koi call nahi karta, aur is mein koi token ya secret likha hua nahi hai.</div>
+  <div class="notice">Your token is saved only in this browser (localStorage). This page makes no calls anywhere except Facebook (Graph API and Facebook Login SDK), and it contains no token or secret.</div>
 
   <div class="stats">
     <div class="stat glass"><span>Connected Pages</span><b id="cPages">0</b></div>
-    <div class="stat glass"><span>Post ke liye select</span><b id="cSelected">0</b></div>
-    <div class="stat glass"><span>Published (is browser se)</span><b id="cPublished">0</b></div>
+    <div class="stat glass"><span>Selected for posting</span><b id="cSelected">0</b></div>
+    <div class="stat glass"><span>Published (from this browser)</span><b id="cPublished">0</b></div>
   </div>
 
   <div class="card glass">
     <h2>Login with Facebook</h2>
-    <p class="sub">Apne Facebook account se login karein — aap ke Pages khud load ho jayenge, token paste karne ki zaroorat nahi.</p>
+    <p class="sub">Log in with your Facebook account — your Pages will load automatically, no need to paste a token.</p>
     <div class="row"><button class="btn fb-btn" id="fbLoginBtn" onclick="loginWithFacebook()"><span class="fblogo">f</span> Login with Facebook</button></div>
     <div id="fbMsg" class="msg"></div>
-    <div class="divider" id="tokenDivider" style="display:none"><span>ya token paste karein</span></div>
+    <div class="divider" id="tokenDivider" style="display:none"><span>or paste a token</span></div>
   </div>
 
   <div class="card glass" id="tokenCard" style="display:none">
     <h2>1. Token</h2>
-    <p class="sub">Graph API Explorer se banaya hua token yahan paste karein. Token kabhi chat mein ya kisi ko na bhejein.</p>
+    <p class="sub">Paste here a token created in the Graph API Explorer. Never send your token in chat or to anyone.</p>
     <div class="field"><label>Access Token</label>
       <div class="row"><input id="token" type="password" placeholder="EAA..." autocomplete="off" style="flex:1"><button class="btn ghost" type="button" onclick="toggleToken()">Show</button></div>
     </div>
     <div class="row">
       <button class="btn primary" id="verifyBtn" onclick="verifyToken()">Verify</button>
-      <button class="btn danger" onclick="disconnect()">Disconnect (token delete karein)</button>
+      <button class="btn danger" onclick="disconnect()">Disconnect (delete token)</button>
     </div>
     <div id="tokenMsg" class="msg"></div>
   </div>
 
   <div class="card glass">
     <h2>2. Pages</h2>
-    <p class="sub">Verify ke baad aap ke Pages yahan dikhenge. Har page ke saath tick karein ke us par post karni hai ya nahi — sirf ON wale pages Composer mein aayenge.</p>
-    <div style="margin-bottom:10px"><button class="btn ghost" id="selectAllBtn" type="button" onclick="toggleSelectAll()">Sab select karein</button></div>
-    <div id="pageList" class="pages"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div>
+    <p class="sub">Your Pages will appear here after Verify. Tick each page to choose whether to post to it — only ON pages will appear in the Composer.</p>
+    <div style="margin-bottom:10px"><button class="btn ghost" id="selectAllBtn" type="button" onclick="toggleSelectAll()">Select all</button></div>
+    <div id="pageList" class="pages"><div class="sub">No page is connected yet — verify a token first.</div></div>
   </div>
 
   <div class="card glass">
     <h2>3. Composer — Publish Now</h2>
-    <p class="sub">Post likhein, Publish dabayein — post usi waqt Section 2 mein ON pages par live ho jayegi. Photo ya video attach karna optional hai.</p>
-    <div class="field"><label>Post in pages par jayegi:</label><div id="targetList" class="target-list"><div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div></div></div>
-    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Apni post yahan likhein… (photo/video ke saath optional)"></textarea></div>
-    <div class="field"><label>Photo ya Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()" style="display:none"><div class="upload-box" role="button" tabindex="0" onclick="$('mediaFile').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();$('mediaFile').click()}"><div class="upload-icons"><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="M17 10l5-3v10l-5-3z"/></svg></span></div><div class="upload-txt"><b>Photo ya video chunein</b><span>Click karein — photo ya video attach karein</span></div></div><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Pehle chhoti video se test karein — bohat bari video ka direct upload slow ho sakta hai ya fail ho sakta hai.</p></div>
+    <p class="sub">Write your post, press Publish — it goes live right away on the ON pages in Section 2. Attaching a photo or video is optional.</p>
+    <div class="field"><label>Your post will go to these Pages:</label><div id="targetList" class="target-list"><div class="sub">No page is connected yet — verify a token first.</div></div></div>
+    <div class="field"><label>Post text</label><textarea id="postText" placeholder="Write your post here… (optional with a photo/video)"></textarea></div>
+    <div class="field"><label>Photo or Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()" style="display:none"><div class="upload-box" role="button" tabindex="0" onclick="$('mediaFile').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();$('mediaFile').click()}"><div class="upload-icons"><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="M17 10l5-3v10l-5-3z"/></svg></span></div><div class="upload-txt"><b>Choose a photo or video</b><span>Click to attach a photo or video</span></div></div><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Test with a small video first — a very large video may upload slowly or fail.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
     <div id="publishResult"></div>
-    <div id="recentWrap" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div class="sub">Recent published posts (is browser se)</div><button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="clearHistory()">History saaf karein</button></div><div id="recentList" class="recent">Abhi koi post nahi hui.</div></div>
+    <div id="recentWrap" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px"><div class="sub">Recent published posts (from this browser)</div><button class="btn ghost" style="padding:4px 10px;font-size:11px" onclick="clearHistory()">Clear history</button></div><div id="recentList" class="recent">No posts yet.</div></div>
   </div>
 
-  <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — preview. Token sirf aap ke browser mein rehta hai.</p>
+  <p class="sub" style="text-align:center;padding:10px 0 6px">Mr Shah FB Publisher — your token stays only in your browser.</p>
   <p style="text-align:center;padding:0 0 30px;margin:0"><a href="?admin=1" id="adminLink" style="color:var(--mut);font-size:11px;text-decoration:none">Admin</a></p>
 </div>
 
 <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
 
 <script>
-/* Mr Shah FB Publisher — preview (Phase 1, Step 1)
-   Sirf browser se seedha graph.facebook.com par calls hoti hain.
-   Token/page tokens sirf is browser ki localStorage mein save hote hain.
-   Is file mein koi token, secret ya App Secret nahi hai. */
+/* Mr Shah FB Publisher (Phase 1, Step 1)
+   Calls go from the browser straight to graph.facebook.com.
+   Tokens/page tokens are saved only in this browser's localStorage.
+   This file contains no token, secret or App Secret. */
 var GRAPH = "https://graph.facebook.com/v26.0";
 var LS_TOKEN = "fbpub_user_token";
 var LS_PAGES = "fbpub_pages";
@@ -110,8 +110,8 @@ function loadPages(){ try { return JSON.parse(localStorage.getItem(LS_PAGES) || 
 function loadPublished(){ try { return JSON.parse(localStorage.getItem(LS_PUBLISHED) || "[]"); } catch(e){ return []; } }
 function savePublished(list){ localStorage.setItem(LS_PUBLISHED, JSON.stringify(list)); }
 
-/* Per-page post on/off — selection localStorage mein (page IDs ki list).
-   Koi saved list na ho to sab pages default ON hote hain. */
+/* Per-page post on/off — selection in localStorage (list of page IDs).
+   If no list is saved, all pages are ON by default. */
 function loadEnabled(){ try { var v = JSON.parse(localStorage.getItem(LS_ENABLED) || "null"); return Array.isArray(v) ? v : null; } catch(e){ return null; } }
 function isPageEnabled(id){ var list = loadEnabled(); return list === null ? true : list.indexOf(String(id)) !== -1; }
 function saveEnabled(list){ localStorage.setItem(LS_ENABLED, JSON.stringify(list)); }
@@ -133,8 +133,8 @@ function togglePage(id, on){
   renderPages();
 }
 
-/* Sab select karein / Sab hatayein — ek click mein saare pages ON ya OFF.
-   Label renderPages() mein state ke mutabiq badalta hai. */
+/* Select all / Deselect all — turns all pages ON or OFF in one click.
+   The label changes with the state in renderPages(). */
 function allPagesEnabled(){
   var pages = loadPages();
   if (!pages.length) { return false; }
@@ -150,9 +150,9 @@ function toggleSelectAll(){
 
 function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
 
-/* Composer ke publish targets — sirf Section 2 mein ON pages.
-   Toggle badalte hi renderPages() dobara chalta hai, is liye ye list
-   foran sync ho jati hai (OFF page gayab, ON page aa jata hai). */
+/* Composer publish targets — only the ON pages in Section 2.
+   renderPages() runs again whenever a toggle changes, so this list
+   syncs at once (an OFF page disappears, an ON page appears). */
 function getTargetPages(){
   return loadPages().filter(function(p){ return isPageEnabled(p.id); });
 }
@@ -163,26 +163,26 @@ function renderPages(){
   $("cPages").textContent = pages.length;
   $("cPublished").textContent = published.length;
   var selBtn = $("selectAllBtn");
-  if (selBtn) { selBtn.textContent = (pages.length && allPagesEnabled()) ? "Sab hatayein" : "Sab select karein"; }
+  if (selBtn) { selBtn.textContent = (pages.length && allPagesEnabled()) ? "Deselect all" : "Select all"; }
   var enabledPages = pages.filter(function(p){ return isPageEnabled(p.id); });
   $("cSelected").textContent = enabledPages.length;
   var target = $("targetList");
   target.innerHTML = !pages.length
-    ? '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>'
+    ? '<div class="sub">No page is connected yet — verify a token first.</div>'
     : (enabledPages.length
       ? enabledPages.map(function(p){
           return '<div class="target-row"><span class="dot"></span><span>' + esc(p.name) + '</span></div>';
         }).join("")
-      : '<div class="sub">— pehle Section 2 mein kisi page ko ON karein —</div>');
+      : '<div class="sub">— turn ON a page in Section 2 first —</div>');
   $("pageList").innerHTML = pages.length
     ? pages.map(function(p){
         var on = isPageEnabled(p.id);
-        return '<div class="page-row' + (on ? '' : ' off') + '"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span><label class="post-toggle"><input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePage(\'' + esc(p.id) + '\', this.checked)"> Post karein</label></div>';
+        return '<div class="page-row' + (on ? '' : ' off') + '"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span><label class="post-toggle"><input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePage(\'' + esc(p.id) + '\', this.checked)"> Post</label></div>';
       }).join("")
-    : '<div class="sub">Abhi koi page connected nahi hai — pehle token verify karein.</div>';
+    : '<div class="sub">No page is connected yet — verify a token first.</div>';
   $("recentList").innerHTML = published.length
-    ? published.slice().reverse().map(function(p){ var label = p.kind === "photo" ? "Photo" : p.kind === "video" ? "Video" : "Text"; return '<div>✓ [' + label + '] ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">Post dekhein (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
-    : 'Abhi koi post nahi hui.';
+    ? published.slice().reverse().map(function(p){ var label = p.kind === "photo" ? "Photo" : p.kind === "video" ? "Video" : "Text"; return '<div>✓ [' + label + '] ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">View post (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
+    : 'No posts yet.';
 }
 
 async function graph(path, token, options){
@@ -195,9 +195,9 @@ async function graph(path, token, options){
   return data;
 }
 
-/* /me/accounts ki saari pages — paging.next (after cursor) ko follow kare
-   jab tak saare pages na aa jayein. Har call mein limit=100 rehta hai.
-   Pages ki koi ginati hardcoded nahi — 5 hon ya 500, sab aate hain. */
+/* All pages from /me/accounts — follows paging.next (after cursor)
+   until every page is loaded. Each call uses limit=100.
+   No page count is hardcoded — whether there are 5 or 500, all are loaded. */
 async function fetchAllAccounts(token){
   var all = [];
   var after = null;
@@ -214,25 +214,25 @@ async function fetchAllAccounts(token){
 
 async function verifyToken(){
   var token = $("token").value.trim();
-  if (!token) { setMsg("tokenMsg", "Pehle token paste karein.", "err"); return; }
+  if (!token) { setMsg("tokenMsg", "Paste a token first.", "err"); return; }
   var btn = $("verifyBtn"); btn.disabled = true; btn.textContent = "Verifying…";
   setMsg("tokenMsg", "");
   try {
     var pages = await fetchAllAccounts(token);
-    if (!pages.length) { setMsg("tokenMsg", "Token theek hai, lekin is se koi Page nahi mila. Explorer mein Pages select kar ke dobara token banayein.", "err"); return; }
+    if (!pages.length) { setMsg("tokenMsg", "The token is valid, but no Page was found for it. Select Pages in Explorer and create the token again.", "err"); return; }
     localStorage.setItem(LS_TOKEN, token);
     localStorage.setItem(LS_PAGES, JSON.stringify(pages));
     mergeEnabled(pages);
     renderPages();
-    setMsg("tokenMsg", "Verify ho gaya — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+    setMsg("tokenMsg", "Verified — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
   } catch (e) {
-    setMsg("tokenMsg", "Verify nahi hua: " + e.message, "err");
+    setMsg("tokenMsg", "Verification failed: " + e.message, "err");
   } finally {
     btn.disabled = false; btn.textContent = "Verify";
   }
 }
 
-/* Photo/video attach — ek file; image ka thumbnail preview, video ka naam + size. */
+/* Photo/video attach — one file; thumbnail preview for images, name + size for videos. */
 var mediaFile = null;
 var mediaObjectUrl = null;
 function onMediaChosen(){
@@ -244,7 +244,7 @@ function onMediaChosen(){
   if (!f) { prev.style.display = "none"; prev.innerHTML = ""; return; }
   var sizeMB = (f.size / (1024 * 1024)).toFixed(1);
   var isVideo = f.type.indexOf("video") === 0;
-  var info = '<div class="media-info"><b style="color:var(--txt)">' + esc(f.name) + '</b> · ' + (isVideo ? "Video" : "Photo") + ' · ' + sizeMB + ' MB</div><div class="row" style="margin-top:10px"><button class="btn ghost" type="button" onclick="clearMedia()">Hata dein</button></div>';
+  var info = '<div class="media-info"><b style="color:var(--txt)">' + esc(f.name) + '</b> · ' + (isVideo ? "Video" : "Photo") + ' · ' + sizeMB + ' MB</div><div class="row" style="margin-top:10px"><button class="btn ghost" type="button" onclick="clearMedia()">Remove</button></div>';
   if (!isVideo && f.type.indexOf("image") === 0) {
     mediaObjectUrl = URL.createObjectURL(f);
     prev.innerHTML = '<img src="' + mediaObjectUrl + '" alt="photo preview">' + info;
@@ -265,14 +265,14 @@ async function publishNow(){
   var picked = getTargetPages();
   var text = $("postText").value.trim();
   var box = $("publishResult"); box.innerHTML = "";
-  if (!picked.length) { box.innerHTML = '<div class="result err">Koi page ON nahi — pehle Section 2 mein kisi page ko ON karein.</div>'; return; }
-  if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Post khaali hai — pehle kuch likhein ya photo/video chunein.</div>'; return; }
+  if (!picked.length) { box.innerHTML = '<div class="result err">No page is ON — turn ON a page in Section 2 first.</div>'; return; }
+  if (!text && !mediaFile) { box.innerHTML = '<div class="result err">Your post is empty — write something or choose a photo/video first.</div>'; return; }
   var btn = $("publishBtn"); btn.disabled = true; btn.textContent = "Publishing…";
   var results = [];
   for (var i = 0; i < picked.length; i++) {
     var page = picked[i];
-    if (!page.access_token) { results.push({ page: page, err: "Is Page ka token nahi mila — dobara Verify karein." }); continue; }
-    if (!isPageEnabled(page.id)) { results.push({ page: page, err: "Ye page OFF hai — pehle Section 2 mein isay ON karein." }); continue; }
+    if (!page.access_token) { results.push({ page: page, err: "No token found for this Page — Verify again." }); continue; }
+    if (!isPageEnabled(page.id)) { results.push({ page: page, err: "This Page is OFF — turn it ON in Section 2 first." }); continue; }
     try {
       var kind = "text", data;
       if (!mediaFile) {
@@ -304,60 +304,60 @@ async function publishNow(){
   }
   renderPages();
   box.innerHTML = results.map(function(r){
-    if (r.id) { return '<div class="result ok">✓ ' + esc(r.page.name) + ' — Post live! <a href="https://www.facebook.com/' + esc(r.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">Post dekhein</a></div>'; }
-    return '<div class="result err">✗ ' + esc(r.page.name) + ' — Post nahi hui: ' + esc(r.err) + '</div>';
+    if (r.id) { return '<div class="result ok">✓ ' + esc(r.page.name) + ' — Post is live! <a href="https://www.facebook.com/' + esc(r.id) + '" target="_blank" rel="noopener" style="color:var(--gold2)">View post</a></div>'; }
+    return '<div class="result err">✗ ' + esc(r.page.name) + ' — Post failed: ' + esc(r.err) + '</div>';
   }).join("");
-  /* Sab pages par post kamyab ho to text + media saaf karo; agar koi page
-     fail hua ho to text waisa hi rehne do taake dobara likhna na pare. */
+  /* If the post succeeded on all pages, clear the text + media; if any page
+     failed, keep the text so it does not have to be typed again. */
   var allOk = results.length && results.every(function(r){ return !!r.id; });
   if (allOk) { $("postText").value = ""; clearMedia(); }
   btn.disabled = false; btn.textContent = "Publish Now";
 }
 
 function disconnect(){
-  if (!confirm("Token, saved Pages aur published history is browser se delete kar dein?")) return;
+  if (!confirm("Delete the token, saved Pages and published history from this browser?")) return;
   localStorage.removeItem(LS_TOKEN);
   localStorage.removeItem(LS_PAGES);
   localStorage.removeItem(LS_PUBLISHED);
   $("token").value = "";
-  setMsg("tokenMsg", "Disconnected — token aur history delete kar di gayi.", "");
+  setMsg("tokenMsg", "Disconnected — token and history deleted.", "");
   renderPages();
 }
 
-/* Sirf published history saaf karein — token aur Pages ko haath nahi lagata. */
+/* Clears only the published history — does not touch the token or Pages. */
 function clearHistory(){
   if (!loadPublished().length) return;
-  if (!confirm("Published history saaf kar dein? (Token aur Pages waisi hi rahenge.)")) return;
+  if (!confirm("Clear the published history? (Your token and Pages will stay.)")) return;
   localStorage.removeItem(LS_PUBLISHED);
   renderPages();
 }
 
-/* Facebook Login (JS SDK) — visitor apne Facebook account se login kare. */
+/* Facebook Login (JS SDK) — the visitor logs in with their Facebook account. */
 window.fbAsyncInit = function(){
   FB.init({ appId: "1576761261159357", cookie: true, xfbml: false, version: "v26.0" });
 };
 
 function loginWithFacebook(){
-  if (!window.FB) { setMsg("fbMsg", "Facebook SDK abhi load nahi hua — page refresh kar ke dobara try karein.", "err"); return; }
+  if (!window.FB) { setMsg("fbMsg", "The Facebook SDK has not loaded yet — refresh the page and try again.", "err"); return; }
   var btn = $("fbLoginBtn"); btn.disabled = true; btn.textContent = "Connecting…";
   setMsg("fbMsg", "");
-  /* Timeout sirf FB.api wale hisse par hai (login dialog user ke apne
-     waqt par chalta hai, us par timeout nahi). Kisi bhi FB.api call ka
-     jawab 15 second mein na aaye to button wapas dabane ke qaabil ho
-     jaye aur timeout ka message dikhe — "Connecting…" par atka na rahe. */
+  /* The timeout applies only to the FB.api part (the login dialog runs
+     on the user's own time, so it has no timeout). If any FB.api call
+     gets no reply within 15 seconds, the button becomes clickable again
+     and a timeout message appears — so it never gets stuck on "Connecting…". */
   var done = false, timer = null;
   function restoreBtn(){ btn.disabled = false; btn.innerHTML = '<span class="fblogo">f</span> Login with Facebook'; }
   function failLogin(msg){ if (done) return; done = true; if (timer) clearTimeout(timer); restoreBtn(); setMsg("fbMsg", msg, "err"); }
-  function armTimer(){ if (timer) clearTimeout(timer); timer = setTimeout(function(){ failLogin("Facebook se jawab nahi aaya (15 second timeout) — dobara try karein."); }, 15000); }
+  function armTimer(){ if (timer) clearTimeout(timer); timer = setTimeout(function(){ failLogin("No reply from Facebook (15 second timeout) — try again."); }, 15000); }
   FB.login(function(resp){
     if (done) return;
     if (!resp || !resp.authResponse) {
-      failLogin("Login cancel ho gaya ya ijazat nahi mili — dobara try karein.");
+      failLogin("Login was cancelled or permission was not given — try again.");
       return;
     }
     var userToken = resp.authResponse.accessToken;
     var allPages = [];
-    /* /me/accounts ki saari pages — paging.next (after cursor) follow kare. */
+    /* All pages from /me/accounts — follows paging.next (after cursor). */
     function fetchPage(after){
       if (done) return;
       armTimer();
@@ -365,18 +365,18 @@ function loginWithFacebook(){
       FB.api(path, function(data){
         if (done) return;
         if (timer) clearTimeout(timer);
-        if (!data || data.error) { failLogin("Pages nahi mile: " + ((data && data.error && data.error.message) || "unknown error")); return; }
+        if (!data || data.error) { failLogin("Pages not found: " + ((data && data.error && data.error.message) || "unknown error")); return; }
         (data.data || []).forEach(function(p){ allPages.push({ id: p.id, name: p.name, access_token: p.access_token }); });
         var nextAfter = data.paging && data.paging.cursors && data.paging.cursors.after;
         if (data.paging && data.paging.next && nextAfter && allPages.length < 2000) { fetchPage(nextAfter); return; }
         done = true; restoreBtn();
-        if (!allPages.length) { setMsg("fbMsg", "Login ho gaya, lekin is account se koi Page nahi mila.", "err"); return; }
+        if (!allPages.length) { setMsg("fbMsg", "Logged in, but no Page was found for this account.", "err"); return; }
         localStorage.setItem(LS_TOKEN, userToken);
         localStorage.setItem(LS_PAGES, JSON.stringify(allPages));
         mergeEnabled(allPages);
         $("token").value = userToken;
         renderPages();
-        setMsg("fbMsg", "Login ho gaya — " + allPages.length + " page(s) connected: " + allPages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+        setMsg("fbMsg", "Logged in — " + allPages.length + " page(s) connected: " + allPages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
       });
     }
     fetchPage(null);
@@ -384,9 +384,9 @@ function loginWithFacebook(){
 }
 
 (function init(){
-  /* Token section aur divider sirf admin ke liye — ?admin=1 ho, ya is browser
-     mein pehle se token save ho (returning admin), to dikhao; warna chhupao.
-     Fresh visitor ko kabhi token section nahi dikhta. */
+  /* The token section and divider are admin-only — show them if ?admin=1
+     is set, or if a token is already saved in this browser (returning admin);
+     otherwise hide them. A fresh visitor never sees the token section. */
   var saved = localStorage.getItem(LS_TOKEN);
   if (new URLSearchParams(location.search).get("admin") === "1" || saved) { $("tokenCard").style.display = ""; $("tokenDivider").style.display = ""; }
   if (saved) { $("token").value = saved; }
