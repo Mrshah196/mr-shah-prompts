@@ -36,7 +36,7 @@
 <div class="wrap">
   <div class="top">
     <div class="brand"><img src="logo.webp" alt="Mr Shah"><div><h1>Mr Shah FB Publisher</h1><div class="sub">Post to your Facebook Pages — right from this browser.</div></div></div>
-    <div class="row"><a class="btn ghost" href="publisher-how-to-use.html">How to use</a><a class="btn ghost" href="?admin=1">Admin</a><a class="btn ghost" href="index.html">← Back to Site</a></div>
+    <div class="row"><a class="btn ghost" href="publisher-how-to-use.html">How to use</a><a class="btn ghost" id="adminBtn" href="?admin=1" style="display:none">Admin</a><a class="btn ghost" href="index.html">← Back to Site</a></div>
   </div>
 
   <div class="notice">Your token is saved only in this browser (localStorage). This page makes no calls anywhere except Facebook (Graph API and Facebook Login SDK), and it contains no token or secret.</div>
@@ -389,6 +389,11 @@ function loginWithFacebook(){
      otherwise hide them. A fresh visitor never sees the token section. */
   var saved = localStorage.getItem(LS_TOKEN);
   if (new URLSearchParams(location.search).get("admin") === "1" || saved) { $("tokenCard").style.display = ""; $("tokenDivider").style.display = ""; }
+  /* The Admin button is hidden from the public — show it only when
+     ?admin=1 is set, or when a token is already saved in this browser
+     (returning admin). "How to use" and "Back to Site" stay public. */
+  var adminBtn = $("adminBtn");
+  if (adminBtn && (new URLSearchParams(location.search).get("admin") === "1" || saved)) { adminBtn.style.display = ""; }
   if (saved) { $("token").value = saved; }
   renderPages();
 })();
