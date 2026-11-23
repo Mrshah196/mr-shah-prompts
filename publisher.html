@@ -48,18 +48,19 @@
   </div>
 
   <div class="card glass">
-    <h2>Login with Facebook</h2>
+    <h2>1. Login with Facebook</h2>
     <p class="sub">Log in with your Facebook account — your Pages will load automatically, no need to paste a token.</p>
     <div class="row"><button class="btn fb-btn" id="fbLoginBtn" onclick="loginWithFacebook()"><span class="fblogo">f</span> Login with Facebook</button></div>
-    <div id="fbMsg" class="msg"></div>
+    <div class="row" id="fbLogoutRow" style="display:none;margin-top:10px"><button class="btn ghost" id="fbLogoutBtn" type="button" onclick="logoutTool()">Log out</button></div>
+    <div class="row" style="align-items:center;gap:10px"><img id="userAvatar" alt="" style="display:none;width:38px;height:38px;border-radius:50%;border:2px solid rgba(245,197,24,.55);object-fit:cover;flex:none"><div id="fbMsg" class="msg" style="margin-top:0;flex:1;min-height:0"></div></div>
     <div class="divider" id="tokenDivider" style="display:none"><span>or paste a token</span></div>
   </div>
 
   <div class="card glass" id="tokenCard" style="display:none">
-    <h2>1. Token</h2>
+    <h2>Admin — Token (optional)</h2>
     <p class="sub">Paste here a token created in the Graph API Explorer. Never send your token in chat or to anyone.</p>
     <div class="field"><label>Access Token</label>
-      <div class="row"><input id="token" type="password" placeholder="EAA..." autocomplete="off" style="flex:1"><button class="btn ghost" type="button" onclick="toggleToken()">Show</button></div>
+      <div class="row"><input id="token" type="password" placeholder="EAA..." autocomplete="off" style="flex:1"><button class="btn ghost" type="button" onclick="toggleToken(event)">Show</button></div>
     </div>
     <div class="row">
       <button class="btn primary" id="verifyBtn" onclick="verifyToken()">Verify</button>
@@ -70,15 +71,15 @@
 
   <div class="card glass">
     <h2>2. Pages</h2>
-    <p class="sub">Your Pages will appear here after Verify. Tick each page to choose whether to post to it — only ON pages will appear in the Composer.</p>
+    <p class="sub">Your Pages will appear here after you log in. Tick each page to choose whether to post to it — only ON pages will appear in the Composer.</p>
     <div style="margin-bottom:10px"><button class="btn ghost" id="selectAllBtn" type="button" onclick="toggleSelectAll()">Select all</button></div>
-    <div id="pageList" class="pages"><div class="sub">No page is connected yet — verify a token first.</div></div>
+    <div id="pageList" class="pages"><div class="sub">No page is connected yet — log in with Facebook above to connect your Pages.</div></div>
   </div>
 
   <div class="card glass">
     <h2>3. Composer — Publish Now</h2>
     <p class="sub">Write your post, press Publish — it goes live right away on the ON pages in Section 2. Attaching a photo or video is optional.</p>
-    <div class="field"><label>Your post will go to these Pages:</label><div id="targetList" class="target-list"><div class="sub">No page is connected yet — verify a token first.</div></div></div>
+    <div class="field"><label>Your post will go to these Pages:</label><div id="targetList" class="target-list"><div class="sub">No page is connected yet — log in with Facebook above to connect your Pages.</div></div></div>
     <div class="field"><label>Post text</label><textarea id="postText" placeholder="Write your post here… (optional with a photo/video)"></textarea></div>
     <div class="field"><label>Photo or Video (optional)</label><input id="mediaFile" type="file" accept="image/*,video/*" onchange="onMediaChosen()" style="display:none"><div class="upload-box" role="button" tabindex="0" onclick="$('mediaFile').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();$('mediaFile').click()}"><div class="upload-icons"><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></span><span class="upload-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="15" height="14" rx="3"/><path d="M17 10l5-3v10l-5-3z"/></svg></span></div><div class="upload-txt"><b>Choose a photo or video</b><span>Click to attach a photo or video</span></div></div><div class="media-preview" id="mediaPreview"></div><p class="sub" style="margin:8px 0 0">Test with a small video first — a very large video may upload slowly or fail.</p></div>
     <div class="row"><button class="btn primary" id="publishBtn" onclick="publishNow()">Publish Now</button></div>
@@ -132,6 +133,8 @@ var LS_TOKEN = "fbpub_user_token";
 var LS_PAGES = "fbpub_pages";
 var LS_PUBLISHED = "fbpub_published";
 var LS_ENABLED = "fbpub_enabled_pages";
+var LS_USER = "fbpub_user_name";
+var LS_PICTURE = "fbpub_user_picture";
 var $ = function(id){ return document.getElementById(id); };
 
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
@@ -139,6 +142,86 @@ function setMsg(id, text, kind){ var el = $(id); el.textContent = text || ""; el
 function loadPages(){ try { return JSON.parse(localStorage.getItem(LS_PAGES) || "[]"); } catch(e){ return []; } }
 function loadPublished(){ try { return JSON.parse(localStorage.getItem(LS_PUBLISHED) || "[]"); } catch(e){ return []; } }
 function savePublished(list){ localStorage.setItem(LS_PUBLISHED, JSON.stringify(list)); }
+
+/* Logged-in user — name from FB.api('/me') after a Facebook login, saved in
+   localStorage so it still shows after a page reload. updateUserLine() writes
+   the green status line in the Login card: "Logged in as: <name> — N page(s)
+   connected: ...". Without a name it falls back to the old wording. */
+function updateUserLine(){
+  var pages = loadPages();
+  if (!pages.length) return;
+  var name = localStorage.getItem(LS_USER);
+  var list = pages.map(function(p){ return p.name; }).join(", ");
+  if (name) { setMsg("fbMsg", "Logged in as: " + name + " — " + pages.length + " page(s) connected: " + list + ".", "ok"); }
+  else { setMsg("fbMsg", "Logged in — " + pages.length + " page(s) connected: " + list + ".", "ok"); }
+  updateUserAvatar();
+}
+/* Logged-in user's profile picture — from FB.api('/me') picture field,
+   saved in localStorage so it still shows after a reload. */
+function updateUserAvatar(){
+  var img = $("userAvatar");
+  if (!img) return;
+  var url = localStorage.getItem(LS_PICTURE);
+  if (url) { img.src = url; img.style.display = ""; }
+  else { img.removeAttribute("src"); img.style.display = "none"; }
+}
+/* Log out button is visible only while this browser is connected. */
+function refreshAuthUI(){
+  var row = $("fbLogoutRow");
+  if (row) { row.style.display = localStorage.getItem(LS_TOKEN) ? "" : "none"; }
+  updateUserAvatar();
+}
+/* Fetch the logged-in user's name and profile picture — best effort, with a
+   5 second fallback to the saved name/picture, so a slow /me call never
+   blocks the login message. */
+function fetchUserName(){
+  var finished = false;
+  function picUrl(me){ return (me && me.picture && me.picture.data && me.picture.data.url) || null; }
+  function finish(name, picture){
+    if (finished) return; finished = true;
+    if (name) { localStorage.setItem(LS_USER, name); }
+    if (picture) { localStorage.setItem(LS_PICTURE, picture); }
+    updateUserLine();
+  }
+  if (window.FB) {
+    FB.api("/me", { fields: "name,id,picture" }, function(me){ finish(me && !me.error && me.name ? me.name : null, picUrl(me)); });
+    setTimeout(function(){ finish(localStorage.getItem(LS_USER), localStorage.getItem(LS_PICTURE)); }, 5000);
+  } else {
+    finish(localStorage.getItem(LS_USER), localStorage.getItem(LS_PICTURE));
+  }
+}
+
+/* Log out of the tool only — clears this browser's saved data. Does NOT call
+   FB.logout(), so the user stays logged in on facebook.com. */
+function logoutTool(){
+  if (!confirm("Log out? Your connected Pages and history in this browser will be cleared.")) return;
+  localStorage.removeItem(LS_TOKEN);
+  localStorage.removeItem(LS_PAGES);
+  localStorage.removeItem(LS_PUBLISHED);
+  localStorage.removeItem(LS_ENABLED);
+  localStorage.removeItem(LS_USER);
+  localStorage.removeItem(LS_PICTURE);
+  $("token").value = "";
+  setMsg("fbMsg", "");
+  setMsg("tokenMsg", "");
+  refreshAuthUI();
+  applyAdminGating();
+  renderPages();
+}
+
+/* The token section, divider, Admin button and footer Admin link are
+   admin-only — they show ONLY with ?admin=1 in the URL. A saved token
+   alone must not reveal them: a logged-in visitor sees only the Login
+   card, Pages and Composer. Admin fallback stays via ?admin=1. */
+function applyAdminGating(){
+  var isAdmin = new URLSearchParams(location.search).get("admin") === "1";
+  $("tokenCard").style.display = isAdmin ? "" : "none";
+  $("tokenDivider").style.display = isAdmin ? "" : "none";
+  var adminBtn = $("adminBtn");
+  if (adminBtn) { adminBtn.style.display = isAdmin ? "" : "none"; }
+  var adminLink = $("adminLink");
+  if (adminLink) { adminLink.style.display = isAdmin ? "" : "none"; }
+}
 
 /* Per-page post on/off — selection in localStorage (list of page IDs).
    If no list is saved, all pages are ON by default. */
@@ -178,7 +261,7 @@ function toggleSelectAll(){
   renderPages();
 }
 
-function toggleToken(){ var inp = $("token"); if (inp.type === "password") { inp.type = "text"; event.target.textContent = "Hide"; } else { inp.type = "password"; event.target.textContent = "Show"; } }
+function toggleToken(ev){ var inp = $("token"); var btn = ev && ev.target ? ev.target : null; if (inp.type === "password") { inp.type = "text"; if (btn) btn.textContent = "Hide"; } else { inp.type = "password"; if (btn) btn.textContent = "Show"; } }
 
 /* Composer publish targets — only the ON pages in Section 2.
    renderPages() runs again whenever a toggle changes, so this list
@@ -198,7 +281,7 @@ function renderPages(){
   $("cSelected").textContent = enabledPages.length;
   var target = $("targetList");
   target.innerHTML = !pages.length
-    ? '<div class="sub">No page is connected yet — verify a token first.</div>'
+    ? '<div class="sub">No page is connected yet — log in with Facebook above to connect your Pages.</div>'
     : (enabledPages.length
       ? enabledPages.map(function(p){
           return '<div class="target-row"><span class="dot"></span><span>' + esc(p.name) + '</span></div>';
@@ -209,7 +292,7 @@ function renderPages(){
         var on = isPageEnabled(p.id);
         return '<div class="page-row' + (on ? '' : ' off') + '"><span class="dot"></span><div><b>' + esc(p.name) + '</b><div class="pid">Page ID: ' + esc(p.id) + '</div></div><span class="badge">Connected</span><label class="post-toggle"><input type="checkbox" ' + (on ? 'checked' : '') + ' onchange="togglePage(\'' + esc(p.id) + '\', this.checked)"> Post</label></div>';
       }).join("")
-    : '<div class="sub">No page is connected yet — verify a token first.</div>';
+    : '<div class="sub">No page is connected yet — log in with Facebook above to connect your Pages.</div>';
   $("recentList").innerHTML = published.length
     ? published.slice().reverse().map(function(p){ var label = p.kind === "photo" ? "Photo" : p.kind === "video" ? "Video" : "Text"; return '<div>✓ [' + label + '] ' + esc(p.pageName) + ' — <a href="https://www.facebook.com/' + esc(p.postId) + '" target="_blank" rel="noopener">View post (ID: ' + esc(p.postId) + ')</a> <span style="color:var(--mut)">· ' + esc(p.when) + '</span></div>'; }).join("")
     : 'No posts yet.';
@@ -255,6 +338,13 @@ async function verifyToken(){
     mergeEnabled(pages);
     renderPages();
     setMsg("tokenMsg", "Verified — " + pages.length + " page(s) connected: " + pages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+    refreshAuthUI();
+    /* Best-effort name + picture for the Login card — a failed /me call changes nothing. */
+    graph("/me?fields=name,id,picture", token).then(function(me){
+      if (me && me.name) { localStorage.setItem(LS_USER, me.name); }
+      if (me && me.picture && me.picture.data && me.picture.data.url) { localStorage.setItem(LS_PICTURE, me.picture.data.url); }
+      if (me && me.name) { updateUserLine(); }
+    }).catch(function(){ /* keep the token flow working without a name */ });
   } catch (e) {
     setMsg("tokenMsg", "Verification failed: " + e.message, "err");
   } finally {
@@ -349,8 +439,14 @@ function disconnect(){
   localStorage.removeItem(LS_TOKEN);
   localStorage.removeItem(LS_PAGES);
   localStorage.removeItem(LS_PUBLISHED);
+  localStorage.removeItem(LS_ENABLED);
+  localStorage.removeItem(LS_USER);
+  localStorage.removeItem(LS_PICTURE);
   $("token").value = "";
   setMsg("tokenMsg", "Disconnected — token and history deleted.", "");
+  setMsg("fbMsg", "");
+  refreshAuthUI();
+  applyAdminGating();
   renderPages();
 }
 
@@ -365,6 +461,14 @@ function clearHistory(){
 /* Facebook Login (JS SDK) — the visitor logs in with their Facebook account. */
 window.fbAsyncInit = function(){
   FB.init({ appId: "1576761261159357", cookie: true, xfbml: false, version: "v26.0" });
+  /* Reload: if this browser is already connected, re-verify the saved name
+     and picture against Facebook; on any error the saved values stay. */
+  if (localStorage.getItem(LS_TOKEN) && localStorage.getItem(LS_USER)) {
+    FB.api("/me", { fields: "name,id,picture" }, function(me){
+      if (me && !me.error && me.name) { localStorage.setItem(LS_USER, me.name); updateUserLine(); }
+      if (me && !me.error && me.picture && me.picture.data && me.picture.data.url) { localStorage.setItem(LS_PICTURE, me.picture.data.url); updateUserAvatar(); }
+    });
+  }
 };
 
 function loginWithFacebook(){
@@ -423,7 +527,8 @@ function loginWithFacebook(){
         mergeEnabled(allPages);
         $("token").value = userToken;
         renderPages();
-        setMsg("fbMsg", "Logged in — " + allPages.length + " page(s) connected: " + allPages.map(function(p){ return p.name; }).join(", ") + ".", "ok");
+        refreshAuthUI();
+        fetchUserName();
       });
     }
     fetchPage(null);
@@ -431,21 +536,13 @@ function loginWithFacebook(){
 }
 
 (function init(){
-  /* The token section and divider are admin-only — show them if ?admin=1
-     is set, or if a token is already saved in this browser (returning admin);
-     otherwise hide them. A fresh visitor never sees the token section. */
+  applyAdminGating();
   var saved = localStorage.getItem(LS_TOKEN);
-  if (new URLSearchParams(location.search).get("admin") === "1" || saved) { $("tokenCard").style.display = ""; $("tokenDivider").style.display = ""; }
-  /* The Admin button is hidden from the public — show it only when
-     ?admin=1 is set, or when a token is already saved in this browser
-     (returning admin). "How to use" and "Back to Site" stay public. */
-  var adminBtn = $("adminBtn");
-  if (adminBtn && (new URLSearchParams(location.search).get("admin") === "1" || saved)) { adminBtn.style.display = ""; }
-  /* The footer Admin link is hidden from the public too — same condition. */
-  var adminLink = $("adminLink");
-  if (adminLink && (new URLSearchParams(location.search).get("admin") === "1" || saved)) { adminLink.style.display = ""; }
   if (saved) { $("token").value = saved; }
   renderPages();
+  refreshAuthUI();
+  /* Reload: show the saved logged-in line again (name + pages). */
+  if (saved && localStorage.getItem(LS_USER)) { updateUserLine(); }
 })();
 </script>
 </body></html>
